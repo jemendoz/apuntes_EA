@@ -1,0 +1,3177 @@
+\documentclass[10pt,a4paper]{article}
+
+% == codificacion y espanol ==
+
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+
+% == paquetes ==
+
+\usepackage{amsmath}
+\usepackage[hidelinks]{hyperref}
+\usepackage{amssymb}
+\usepackage{tcolorbox}
+\usepackage{mathtools}
+\usepackage{graphicx}
+\usepackage{eso-pic}
+\usepackage{tikz}
+\usepackage{tikz-cd}
+\usepackage{faktor}
+\usepackage{cancel}
+
+% == nada de sangrado ==
+
+\setlength{\parindent}{0cm}
+
+% == foto portada ==
+
+\newcommand\BackgroundPic{
+	\put(0,0){
+		\parbox[b][\paperheight]{\paperwidth}{
+			\vfill
+			\centering
+			\includegraphics[width=\paperwidth,height=\paperheight]{fondo.jpg}
+			\vfill
+		}
+	}
+}
+
+% == definiciones de comandos ==
+
+\definecolor{pastelpink}{RGB}{253,181,194}
+
+\newtcolorbox{defin}{colback=cyan!15,colframe=cyan!80,coltitle=black,title=Definición}
+\newtcolorbox{teoma}{colback=red!15,colframe=red,coltitle=black,title=Teorema}
+\newtcolorbox{corol}{colback=orange!15,colframe=orange!80,coltitle=black,title=Corolario}
+\newtcolorbox{propo}{colback=green!15,colframe=green!80!black,coltitle=black,title=Proposición}
+\newtcolorbox{lema}{colback=blue!15,colframe=blue!60,coltitle=black,title=Lema}
+\newtcolorbox{prdad}{colback=violet!15,colframe=violet!65,coltitle=black,title=Propiedad}
+
+\newcommand{\dem}{\textit{Demostraci\'{o}n: }}
+\newcommand{\ej}[2]{\textbf{Ejercicio #1:} \textit{#2}}
+\newcommand{\gen}[1]{\langle #1 \rangle}
+\newcommand{\normleq}{\trianglelefteq}
+\newcommand{\normle}{\triangleleft}
+\newcommand{\im}{\mathrm{Im}\,}
+
+\renewcommand{\leq}{\leqslant}
+\renewcommand{\geq}{\geqslant}
+
+% == metadatos ==
+
+\title{Estructuras algebr\'{a}icas}
+\author{Jes\'{u}s Mendoza}
+\date{2025}
+
+% == documento ==
+
+\begin{document}
+	\begin{titlepage}
+		\AddToShipoutPicture*{\BackgroundPic}
+		\vspace*{1cm}
+	\end{titlepage}
+
+	\clearpage
+
+	\tableofcontents
+	\newpage
+
+	\section{Grupos}
+	\subsection{Monoides}
+	Los monoides van a ser una estructura algebr\'{a}ica \'{u}til para entender los grupos.
+
+	\begin{defin}
+		Un monoide es un conjunto no vac\'{i}o, $M$, dotado de una operaci\'{o}n interna binaria, $(\cdot)$. El monoide se representa
+		como $(M,\cdot)$, aunque se puede sobreentender como $M$. La operaci\'{o}n sigue los siguientes axiomas:
+		\begin{enumerate}
+			\item Asociatividad. $a(bc) = (ab)c \quad \forall a,b,c \in M$
+			\item Elemento neutro. $\exists e \text{ t.q. } \forall a \in M, \; ae = ea = a$
+		\end{enumerate}
+	\end{defin}
+
+	Adem\'{a}s, si la operaci\'{o}n es conmutativa, se dice que el monoide es \textit{conmutativo}.
+
+	\begin{prdad}
+		Un monoide tiene un solo neutro.
+	\end{prdad}
+
+	\dem Sean $e$ y $e'$ elementos neutros del monomio $(M,\star)$.
+	\begin{gather*}
+		e \star e' = \begin{cases}
+			e \; (\text{por ser neutro}) \\
+			e' \; (\text{por ser neutro})
+		\end{cases} \implies e=e'
+	\end{gather*}
+	
+
+	\begin{prdad}
+		Si un elemento $a$ es invertible ($\exists b \text{ t.q. } ab = e$), el inverso es \'{u}nico.
+	\end{prdad}
+
+	\dem Sean $b$ y $c$ inversos distintos de $a$ en el monoide $(M,\star)$. Entonces
+	\begin{gather*}
+		\begin{cases}
+			(b \star a) \star c = e \star c = c \\
+			b \star (a \star c) = b \star e = b
+		\end{cases}
+		\implies b=c
+	\end{gather*}
+
+	\begin{prdad}
+		Al multiplicar $a_1,\ldots,a_n$ elementos de un monoide, da igual el orden de operar, si se respeta el orden de los factores.
+	\end{prdad}
+
+	\dem Por inducci\'{o}n. Consideramos el caso $n=1$ y $n=2$ triviales. El caso $n=3$, por axioma de la operaci\'{o}n, se cumple.
+	Con el caso $n-1$ supuesto, vemos el caso $n$: manteniendo el orden de los factores, podemos separar el produto en la siguiente operaci\'{o}n:
+	\begin{gather*}
+		x = x_1 \cdot x_2 = (a_1 \cdots a_i) \cdot (a_{i+1} \cdots a_n)
+	\end{gather*}
+	Por hip\'{o}tesis:
+	\begin{gather*}
+		x_1 = ((a_1 \cdot x_2) \cdots)\cdot a_i \\
+		x_2 = ((a_{i+1} \cdot a_{i+2}) \cdots) \cdot a_n
+	\end{gather*}
+	Si $x_2 = a_n$, entonces
+	$$
+	x = x_1 \cdot x_2 = (((a_1 \cdot a_2)\cdots)\cdot a_{n-1}) \cdot a_n
+	$$
+	y hemos acabado. Si $x_2$ tiene m\'{a}s de un factor:
+	$$
+	x = x_1 \cdot x_2 = \overbrace{((a_1 \cdot a_2) \cdots ) a_i)}^{(1)} \cdot \overbrace{((a_{i+1} \cdot a_{i+2}) \cdots ) a_{n-1})}^{(2)}
+	\cdot \overbrace{(a_n)}^{(3)}
+	$$
+	Podemos operar primero (1) con (2), por hip\'{o}tesis, y luego con (3).
+	
+	\begin{prdad}
+		Sea $(M,\cdot)$ un monoide (que por comoidad, denotamos multiplicativamente), y $e$ es neutro. Entonces
+		\begin{enumerate}
+			\item $e \cdot e = e \implies e$ es invertible, con inverso $e$
+			\item Sea $a$ invertible, con inverso $a^{-1}$. Se cumple que $a \cdot a^{-1} = e = a^{-1} \cdot a$. Es decir, el inverso
+				de $a^{-1}$ es $a$.
+			\item Sea $a,b \in M$ invertibles.
+				\begin{gather*}
+				(ab)\cdot(b^{-1}a^{-1}) = a(b \cdot b^{-1}) a^{-1} = a \cdot e \cdot a^{-1} = \\
+				= a \cdot a^{-1} = e = \ldots = (b^{-1} a^{-1}) \cdot (ab)
+				\end{gather*}
+				Es decir, el inverso de $ab$ es $b^{-1}a^{-1}$
+		\end{enumerate}
+	\end{prdad}
+
+	\subsection{Grupos}
+	Los grupos son una estructura muy similar a los monoides, pero con axiomas extra.
+
+	\begin{defin}
+		Un grupo es un conjunto no vac\'{i}o, $G$, dotado de una operaci\'{o}n interna binaria. Sigue lo siguientes axiomas:
+		\begin{enumerate}
+			\item Asociatividad. $a(bc) = (ab)c \quad \forall a,b,c \in G$
+			\item Elemento neutro. $\exists e \text{ t.q. } \forall a \in G, \; ae = ea = a$
+			\item Inverso. $\forall a \in G, \; \exists b \in G \text{ t.q. } ab=ba=e$
+		\end{enumerate}
+	\end{defin}
+
+	Adem\'{a}s, si la operaci\'{o}n de un grupo es conmutativa, lo llamamos \textit{grupo conmutativo}, o \textit{grupo abeliano}. La cantidad de elementos
+	del grupo se le conoce como \textit{orden}.
+	
+	\subsection{Homomorfismos e isomorfismos}
+	Vamos a ver como se deben comportar las aplicaciones entre grupos.
+
+	\begin{defin}
+		Sean los grupos $(G_1, \cdot),(G_2,\star)$. Una aplicaci\'{o}n $f: G_1 \to G_2$ es un \textit{homomorfismo} si $f(ab) = f(a) \star f(b)
+		\; \forall a,b \in G_1$. \\
+
+		Si un homomorfismo es biyectivo, decimos que es un \textit{isomorfismo}. \\
+
+		Si un isomorfismo es de un grupo a si mismo, decimos que es un \textit{automorfismo}.
+
+		Si existe un isomorfismo entre dos grupos $f: G_1 \to G_2$, decimos que $G_1$ es \textit{isomorfo} a $G_2$, escribiendo $G_1 \cong G_2$.
+	\end{defin}
+
+	\begin{propo}
+		\begin{enumerate}
+			\item Sea $f:G_1 \to G_2$ isomorfismo. Entonces $f^{-1}:G_2 \to G_1$ es isomorfismo.
+			\item Sean $f:G_1 \to G_2$ y $g:G_2 \to G_3$ isomorfismos, con $(G_1, \cdot), (G_2, \star), (G_3, \circ)$. Entonces
+				$gf: G_1 \to G_3$ es isomorfismo.
+		\end{enumerate}
+	\end{propo}
+
+	\dem Para demostrar 1), basta ver que $f^{-1}$ respeta las operaciones, es decir, $f^{-1}(b_1 \star b_2) = f^{-1}(b_1) \cdot f^{-1}(b_2)$.
+	Como f es biyectiva, $\exists a_1, a_2 \in g_1 \text{ t.q. } b_1 = f(a_1), b_2 = f(a_2)$.
+	$$
+	f^{-1}(b_1 \star b_2) = f^{-1}(f(a_1) \star f(a_2)) = f^{-1}(f(a_1 a_2)) = a_1 a_2 = f^{-1}(b_1) \cdot f^{-1}(b_2)
+	$$
+	Para ver 2), usamos una l\'{o}gica similar:
+	\begin{gather*}
+		gf(a_1 a_2) = g(f(a_1 a_2)) = g(f(a_1) \star f(a_2)) = g(f(a_1)) \circ g(f(a_2)) = \\
+		= gf(a_1) \circ gf(a_2)
+	\end{gather*} \\
+	
+	\textit{Dato curioso. } Mientras que $(\mathbb{R},+) \cong (\mathbb{R}^{+},\cdot)$, no es cierto que
+	$(\mathbb{Q},+) \cong (\mathbb{Q}^{+},\cdot)$. \\
+	\dem Para lo primero, basta con tomar $f: \mathbb{R} \to \mathbb{R}^{+}, f(x) = e^{x}$. Para lo segundo, supongamos
+	que existe $f:\mathbb{Q} \to \mathbb{Q}^{+}$ isomorf\'{i}a. Sean $a,b \in \mathbb{Z}, b > 0, \mathrm{mcd}(a,b) = 1,
+	\dfrac{a}{b} = f(1)$. Sea $N$ par, $N > |a|$, $N > b$. Entonces tenemos que
+	\begin{gather*}
+		\dfrac{a}{b} = f(1) = f(\dfrac{1}{N} + \cdots \dfrac{1}{N}) = f(\dfrac{1}{N})^{N}
+	\end{gather*}
+	Ahora, sea $c,d \in \mathbb{Z}, d > 0, \mathrm{mcd}(a,b) = 1, \dfrac{a}{b} = f(\dfrac{1}{N})$. Entonces
+	\begin{gather*}
+		\dfrac{a}{b} = f(\dfrac{1}{N})^{N} = \dfrac{c^{N}}{d^{N}} \implies d^{N}a = c^{N}b \implies \\
+		\implies \begin{cases}
+			d^{N} | b \overset{N > b}{\implies} d = 1 \\
+			c^{N} | a \overset{N > |a|}{\implies} c = \pm 1
+		\end{cases}
+	\end{gather*}
+	Lo que significa que $\forall N$ suficientemente grande, $f(\dfrac{1}{N}) = 1$, lo que la hace no-biyectiva.
+	
+	\begin{corol}
+		El conjunto de los automorfismo (isomorfismos de un grupo al mismo) forman en s\'{i} un grupo.
+		\begin{gather*}
+			\mathrm{Aut}(g) = \{f:G \to G | f \text{ es un isomorfismo}\}
+		\end{gather*}
+		La operaci\'{o}n es la composici\'{o}n, y el elemento neutro es la aplicaci\'{o}n identidad.		
+	\end{corol}
+
+	\subsection{Subgrupos}
+
+	\begin{defin}
+		Dado un grupo $(G,\cdot)$, llamamos \textit{subgrupo} $H$ a un conjunto no vac\'{i}o, subconjunto de $G$, que cumple:
+		\begin{enumerate}
+			\item $ab \in H, \; \forall a,b \in H$
+			\item $a^{-1} \in H, \; \forall a \in H$
+		\end{enumerate}
+	\end{defin}
+
+	\begin{defin}
+		Llamamos \textit{subgrupo de automorfismos internos}, denotado por $\mathrm{inn}(G)$ subgrupo de $Aut(G)$ formado
+		por los automorfismos de la forma:
+		\begin{align*}
+			\mathrm{Ad}_a: G & \to G \\
+			b & \mapsto aba^{-1}
+		\end{align*}
+
+		A estas aplicaciones, las llamamos \textit{automorfismos internos}.
+	\end{defin}
+
+	\dem Vamos a demostrar que los automorfismos internos son homomorfismos.
+	\begin{gather*}
+		\mathrm{Ad}_a(b_1 b_2) = a(b_1 b_2) a^{-1} = ab_1 a^{-1} a b_2 a^{-1} = \mathrm{Ad}_a(b_1)\mathrm{Ad}_a(b_2)
+	\end{gather*}
+	
+	\dem Vamos a demostrar que los automorfismos internos son biyecciones.
+	\begin{gather*}
+		\mathrm{Ad}_{a^{-1}} \mathrm{Ad}_a (b) = \mathrm{Ad}_{a^{-1}} (aba^{-1}) = a^{-1} (aba^{-1}) (a^{-1})^{-1} = \\
+		= a^{-1} a b a^{-1} a = e b e = b
+	\end{gather*}
+	Por lo que $\mathrm{Ad}_{a^{-1}} \mathrm{Ad}_{a} = \mathrm{Id}$, lo que significa que el automorfismo interno tiene inversa, y es $\mathrm{Ad}_{a^{-1}}$.
+
+	\begin{prdad}
+		Los subgrupos contienen al elemento neutro del grupo.
+	\end{prdad}
+
+	\dem Sea $H$ subgrupo de $(G,\cdot)$.
+	\begin{gather*}
+		H \neq \varnothing \implies \exists h \in H \implies \exists h^{-1} \in H \implies hh^{-1} \in H \implies e \in H
+	\end{gather*}
+
+	\begin{defin}
+		En un grupo $G$, los conjuntos $\{e\}$ y $G$ son subgrupos de $G$. Al primero se le llama \textit{subgrupo trivial},
+		y al otro \textit{subgrupo propio}.
+	\end{defin}
+
+	\begin{propo}
+		Sea un grupo $G$ y $H$ subconjunto finito no vac\'{i}o de $G$. Se tiene que $H$ es subgrupo de $G$ si y solamente si $ab \in H \; \forall a,b \in H$
+	\end{propo}
+
+	\dem Aqui, $(G,\cdot)$ es un grupo, $H \subset G$, y $H \neq \varnothing$, y $H$ es cerrado por productos. Veamos que $H$ es cerrado
+	por inversos. Como $H$ es finito, $H = \{h_1,\ldots,h_n\}$. Dado un $h_i \in H$, consideramos
+	$$
+	h_i h_1,\ldots,h_i h_n
+	$$
+	que pertenecen todos en $H$, ya que $H$ es cerrado por productos. Comprobamos que no hay repeticiones. Supongamos que
+	\begin{gather*}
+		h_i h_k = h_i h_k, \; j \neq k \underset{\exists h^{-1}_i \in G}{\implies} h_i^{-1} (h_i h_j) = h_i^{-1} (h_i h_k) \implies \\
+		\underset{\text{asociativ.}}{\implies} (h_i^{-1} h_i) h_j = (h_i^{-1} h_i) h_k \implies h_j = h_k
+	\end{gather*}
+	Lo que es imposible, si $j \neq k$, por lo que en el conjunto $\{h_i h_1,\ldots,h_i h_n\}$ no tiene repetidos, y por lo tanto, hay
+	$n$ elementos, como en $H$. Entonces,
+	$$
+	\exists h_j \in H \text{ t.q. } h_i h_j = h_i \implies \ldots \implies h_j = e
+	$$
+	Entonces
+	$$
+	\exists h_k \in H \text{ t.q. } h_i h_k = e
+	$$
+	ya que el neutro est\'{a} en $H$, pero entonces, tiene que ser uno de los $\{h_i h_1, \ldots, h_i h_n\}$, por lo que tiene que
+	ser ese $h_k$ el inverso de $h_i$, y esto se cumple para cualquier $h_i$. Por lo que $H$ es cerrado por inversos.
+	
+	\begin{defin}
+		Podemos representar relaciones de contenidos usando un diagrama de ret\'{i}culos. En \'{a}lgebra, los usamos para
+		indicar que subgrupos est\'{a}n contenidos en otros sin tener ning\'{u}n otro subgrupo por medio.
+		Como el siguiente ejemplo:
+
+		\begin{tikzcd}
+			                           & {\{1,2,3\}}                                 &                            \\
+			{\{1,2\}} \arrow[ru]       & {\{1,3\}} \arrow[u]                         & {\{2,3\}} \arrow[lu]       \\
+			\{1\} \arrow[u] \arrow[ru] & \{2\} \arrow[lu] \arrow[ru]                 & \{3\} \arrow[lu] \arrow[u] \\
+			                           & \varnothing \arrow[lu] \arrow[u] \arrow[ru] &                           
+		\end{tikzcd}
+	\end{defin}
+
+	\begin{defin}
+		Dado un subconjunto no vac\'{i}o de $X$ de un grupo $G$ y $X^{-1} = \{a^{-1} | a \in X\}$, el conjunto
+		\begin{gather*}
+			\langle X \rangle = \{a_1 \cdots a_n | a_1,\ldots,a_n \in X \cup X^{-1}, n \in \mathbb{N}\}
+		\end{gather*}
+		es un subgrupo de $G$ al cual llamaremsos subgrupo generado por $X$.
+		Cualquier subgrupo de $G$ que contiene a $X$ contiene tambi\'{e}n a $\langle X \rangle$.
+	\end{defin}
+
+	\begin{defin}
+		El caso m\'{a}s sencillo de subgrupo generado es el de un solo elemento. A estos los llamamos \textit{grupos c\'{i}clicos}.
+		\begin{gather*}
+			\langle a \rangle \underset{X = \{a\}}{=} \{a_1 \cdots a_n | a_1,\ldots,a_n \in X \cup X^{-1}, n \geq 1\} = \{a^{k} | k \in \mathbb{Z}\}
+		\end{gather*}
+	\end{defin}
+
+	Como en espacio vectoriales, vamos a poder operar juntando e intersecando subgrupos, pero como en espacio vectoriales,
+	vamos a tener que buscar un sustituto para la uni\'{o}n de subgrupos, ya que unirlos no es un grupo.
+
+	\begin{propo}
+		Sea el grupo $(G,\cdot)$.
+		\begin{enumerate}
+			\item La intersecci\'{o}n de cualquier familia arbitraria de subgrupos de $(G,\cdot)$ es un subgrupo
+			\item El subgrupo generado por $X \subseteq G$ es la intersecci\'{o}n de todos los subgrupos de $G$ que contienen a $X$.
+		\end{enumerate}
+	\end{propo}
+
+	\dem Para la primera parte, sea $\{H_i\}_{i \in I}$ una familia de subgrupos de un grupo $G$. Veamos que $H := \bigcap_{i \in I} H_i$ es un subgrupo
+	de $G$.	Primero, $H \neq \varnothing$, ya que $e \in H_i \; \forall i \in I$. Adem\'{a}s, $H$ es cerrado por productos. Dados $h, h' \in H$,
+	tenemos que
+	$$
+	h, h' \in H_i \; \forall i \in I \implies hh' \in H_i \; \forall i \in I \implies hh' \in H.
+	$$
+	De la misma forma, vemos que es cerrado por inversos
+	$$
+	h \in H \implies h \in H_i \; \forall i \in I \implies h^{-1} \in H_i \; \forall i \in I \implies h^{-1} \in H
+	$$	
+
+	\dem Para la segunda parte, veamos que $\langle X \rangle$ coincide con la intersecci\'{o}n de todos los subgrupos de $G$ que contienen a $X$.
+	Llamemos a esta intersecci\'{o}n $H'$, que, por 1), es subgrupo de $G$, y $H'$ contiene a $X$. Falta ver que $X \subseteq H'$.
+	Es claro $\langle X \rangle$ es subgrupo de $G$, y adem\'{a}s $X \subseteq \langle X \rangle$, por lo que $\langle X \rangle$ es uno
+	de los subgrupos que forman $H$ por intersecci\'{o}n. Por ello, tenemos que $H' = \langle X \rangle$. \\
+
+	Vamos a ver un ejemplo curioso de generadores. Sean:
+	\begin{gather*}
+		a = \begin{pmatrix}
+			0 & 1 \\
+			1 & 0
+		\end{pmatrix} \quad b = \begin{pmatrix}
+			0 & 2 \\
+			\dfrac{1}{2} & 0
+		\end{pmatrix}
+	\end{gather*}
+
+	Vemos que $a^2 = \mathrm{Id}$, $a^{3} = a$, $a^{4} = \mathrm{Id},\ldots$. Si lo hacemos con $b$, tenemos $b^2 = \mathrm{Id}$. Parecer\'{i}a
+	que el generador $\langle ab \rangle$ no es infinito, pero si nos ponemos a echar cuentas, vemos que:
+	\begin{gather*}
+		(ab)^{n} = \begin{pmatrix}
+			\dfrac{1}{2^{n}} & 0 \\
+			0 & 2^{n}
+		\end{pmatrix}
+	\end{gather*}
+	por lo que el generador es infinito.
+
+	\begin{propo}
+		Sea $\{H_i | i \in \Lambda\}$ una familia de subgrupos de un grupo $(G, \cdot)$.
+		\begin{enumerate}
+			\item La intersecci\'{o}n $\bigcap_{i \in \Lambda} H_i$ est\'{a} contenida en todos los subgrupos $H_i$ y
+				contiene a cualquier subgrupo contenido en todos ellos.
+			\item El subgrupo $\langle \bigcup_{i \in \Lambda} H_i\rangle$ contiene a todos los subgrupos $H_i$ y
+				est\'{a} contenido en cualquier subgrupo que los contenga.
+		\end{enumerate}
+	\end{propo}
+
+	\dem Para la parte 2). Sea $H := \langle \bigcup_{i \in \Lambda} H_i \rangle$. Veamos que $H_i \subseteq H \; \forall i \in \Lambda$. Sabemos
+	que $H$ es el subgrupo m\'{a}s peque\~{n}o que contiene $\bigcup_{i \in \Lambda} H_i$, por lo que contiene
+	a cada $H_i$. Cualquier otro subgrupo que contenga a cada $H_i$ contiene a $\bigcup_{i \in \Lambda} H_i$, por lo que
+	contiene a $\langle \bigcup_{i \in \Lambda} H_i \rangle = H$
+
+	\begin{propo}
+		Sea $H \leq G$ (subgrupo de $G$) y $a \in G$. El conjunto $aHa^{-1}$ = $\{aha^{-1} | h \in H\}$ tambi\'{e}n es
+		subgrupo de G, al cual llamamos subgrupo \textit{conjugado de $H$ por $a$}. Adem\'{a}s, tiene el mismo
+		orden que $H$.
+	\end{propo}
+
+	\dem Claramente $aHa^{-1} \neq \varnothing$ por serlo $H$. Dados $aha^{-1}$ y $ah'a^{-1} \in aHa^{-1}$
+	\begin{gather*}
+		(aha^{-1})(ah'a^{-1}) = ahh'a^{-1} \in aHa^{-1}
+	\end{gather*}
+	por lo que es cerrado por productos. Adem\'{a}s
+	\begin{gather*}
+		(aha^{-1})^{-1} = (a^{-1})^{-1} h^{-1} a^{-1} = ah^{-1}a^{-1} \in aHa^{-1}
+	\end{gather*}
+	por lo que es cerrado por inversos, y por lo tanto, grupo.
+
+	Como $\mathrm{Ad}_a : G \to G$ es biyectiva, y $aHa^{-1} = \mathrm{Ad}_a(H)$, entonces $|aHa^{-1}| = |H|$.
+
+	\begin{teoma}
+		El orden de cualquier subgrupo de un grupo finito divide el orden del grupo.
+	\end{teoma}
+
+	\dem Aqu\'{i} $G$ es un grupo finito y $H$ es un subgrupo de $G$. DEclaramos que para $x,y \in G$,
+	\begin{gather*}
+		x \equiv y \iff \exists h \in H \text{ t.q. } y = xh
+	\end{gather*}
+	
+	Vamos a ver alguna propiedades
+	\begin{itemize}
+		\item Reflexiva: cogiendo el elemento neutro, $x = xe \; \forall x \in G$
+		\item Sim\'{e}trica: cogiendo el inverso, $y = xh \implies x = yh^{-1}$
+		\item Transitiva: si $y = xh, \; z = yh' \implies z = x(hh')$
+	\end{itemize}
+	Por lo que la relaci\'{o}n es de equivalencia. Adem\'{a}s, la clase de equivalencia tiene tantos
+	elementos como $H, \; \forall x \in H$. Si $[x_1],\ldots,[x_k]$ son las distintas clases de equivalencia,
+	entonces sabemos que
+	\begin{gather*}
+		G = [x_1] \sqcup \ldots \sqcup [x_k] \\
+		|G| = |[x_1]| \sqcup \ldots \sqcup |[x_k]| = \\
+		= |H| + \ldots + |H| = k |H|
+	\end{gather*}
+	donde $k$ es el n\'{u}mero distinto de clases de equivalencia que hay. Por ello,
+	$|H|$ divide a $|G|$
+
+	\begin{defin}
+		Sea $H$ un subgrupo de un grupo $G$. Los conjuntos $aH = \{ah | h \in H\}$, con $a \in G$ se les llama \textit{clases
+		laterales a la izquierda} de $H$ en $G$. En un grupo finito $G$ hay $|G : H| := |H|/|G|$ de estas
+		clases. A este n\'{u}mero se le llama \textit{\'{i}ndice de $H$ en $G$}.
+	\end{defin}
+
+	\begin{corol}
+		Si dos subgrupos de un grupo finito tienen ordenes coprimos, su intersecci\'{o}n es el subgrupo trivial.
+	\end{corol}
+
+	\dem Aqu\'{i} $G$ es grupo finito, $H_1,H_2$ son subgrupos de $G$ con ordenes coprimos entre s\'{i}. Veamos que $H_1 \cap H_2 = \{e\}$.
+	Sabemos que $H_1 \cap H_2$ es subgrupo, que adem\'{a}s es subgrupo tanto de $H_1$ como de $H_2$. Por el teorema de Lagrange,
+	su tama\~{n}o divide al tama\~{n}o de $H_1$, y tambi\'{e}n al de $H_2$, pero como estos son coprimos, el \'{u}nico factor que
+	tienen en com\'{u}n es el 1.
+
+	\subsection{Ejemplos de grupos}
+
+	\paragraph{Grupo multiplicativo de los complejos}
+	Denotado $(\mathbb{C} \setminus \{0\},\cdot)$, es un grupo del que podemos destacar los subgrupos de raices de la unidad tal que:
+	\begin{gather*}
+		\{w,w^2,\ldots,w^{k} = 1\}
+	\end{gather*}
+
+	\paragraph{Grupos de permutaciones}
+	En un conjunto de $n$ elementos, las aplicaciones biyectivas (permutaci\'{o}n), junto con la composici\'{o}n son un grupo. Por ejemplo:
+	\begin{gather*}
+		X = \{1,2,3,4\} \\
+		f \in S_X \text{ t.q. } \begin{cases}
+			1 \to 2 \\
+			2 \to 4 \\
+			3 \to 3 \\
+			4 \to 1
+		\end{cases}
+	\end{gather*}
+	Este grupo es c\'{i}clico, por lo que para toda aplicaci\'{o}n, existe una potencia que acabe siendo el neutro.
+
+	\paragraph{Grupo general lineal}
+	Dado un cuerpo $F$, el conjunto
+	$$
+	GL_n(F) = \{A \in M_n(F) | \mathrm{det}(A) \neq 0\}
+	$$
+	con el producto de matrices es un grupo.
+
+	\paragraph{Grupo cuaternio}
+	Es un grupo, $Q_8$, es isomorfo a las siguiente matrices:
+	$$
+	\pm \begin{pmatrix}
+		1 & 0 \\ 0 & 1
+	\end{pmatrix}
+	, \quad \pm \begin{pmatrix}
+		i & 0 \\ 0 & -i
+	\end{pmatrix}
+	, \quad \pm \begin{pmatrix}
+		0 & 1 \\ -1 & 0
+	\end{pmatrix}
+	, \quad \pm \begin{pmatrix}
+		0 & i \\ i & 0
+	\end{pmatrix}
+	$$
+	llamadas: $\pm 1, \pm i, \pm j, \pm k$, respectivamente. Tienen la curiosa propiedad: $i^2 = j^2 = k^2 = -1$. El grupo
+	no es abeliano, y puedes usar esta tabla para multiplicar elementos: \\
+	\begin{tikzcd}
+	             & i \arrow[rd] &              \\
+	k \arrow[ru] &              & j \arrow[ll]
+	\end{tikzcd}
+
+	\paragraph{Grupos de simetr\'{i}as}
+	Dado un conjunto $X$ espacio af\'{i}n eucl\'{i}deo $E$, el conjunto
+	\begin{gather*}
+		\mathrm{Sim}(X) = \{f:E \to E | f \text{ es aplicaci\'{o}n af\'{i}n biyectivas, } \\
+		d(f(x),f(y)) = d(x,y) \forall x,y \in E, \; f(X) = X\}
+	\end{gather*}
+
+	El grupo di\'{e}drico, $D_n$, de orden $2n$ es el grupo de simetr\'{i}as del pol\'{i}gono regular de $n$ caras. Podemos considerar
+	estos pol\'{i}gonos como los inscritos en la circunferencia de radio 1, y con el v\'{e}rtice principal en (1,0).
+	El grupo est\'{a} formado por el conjunto
+	\begin{gather*}
+		D_n = \{\rho, \rho^2, \ldots, \rho^{n} = \mathrm{Id}, \sigma, \sigma \rho, \ldots, \sigma \rho^{n-1}\}
+	\end{gather*}
+	donde $\rho^{k}$ es la rotaci\'{o}n positiva de $2\pi/k$ radianes, y $\sigma$ es la reflexi\'{o}n respecto al eje que pasa
+	por el v\'{e}rtice principal y el centro de la figura. El operador el la composici\'{o}n de simetr\'{i}as.
+
+	\textit{Nota: } dada $f$ simetr\'{i}a del pol\'{i}gono de $n$ v\'{e}rtices, podemos elegir $i=0,1,\ldots$ de modo
+	que $\sigma^{i} f$ sea rotaci\'{o}n que fija al pol\'{i}gono, por lo que $\sigma^{i} f = \rho^{j}$ para alg\'{u}n $j$. Por ello,
+	$f = \sigma ^{-i} \rho^{j}$, por lo que $D_n$ son todas las simetr\'{i}as.
+
+	Observar tambi\'{e}n
+	\begin{gather*}
+		\underbrace{\text{rotaci\'{o}n}}{\sigma \rho \sigma^{-1}} = \rho^{n-1} = \rho^{-1}
+	\end{gather*}
+	y, en general, para echar cuentas est\'{a} bien saber que
+	\begin{gather*}
+		\begin{cases}
+			\rho^{n} = \mathrm{Id}, \quad \sigma^2 = \mathrm{Id} \\
+			\sigma \rho \sigma^{-1} = \rho^{-1}
+		\end{cases}
+	\end{gather*}
+
+
+	\subsection{Grupos c\'{i}clicos}
+
+	\begin{defin}
+		Sea el grupo $G$, $a \in G$. El \textit{orden} de $a$ es, en caso de existir, el m\'{i}nimo $n \in \mathbb{N}$ tal que
+		$a^{n} = e$. Si tal m\'{i}nimo no existe, se dice que es de orden infinito. Se denota como $|a| = n$.
+	\end{defin}
+
+	\begin{propo}
+		En un grupo finito, ning\'{u}n elemento puede tener orden infinito.
+	\end{propo}
+
+	\begin{propo}
+		Sea $G$ grupo finito, y $a \in G$. Se tiene que $a^{n} = e \iff |a|$ divide a $n$. En particular, $a^{n} = a^{m} \iff n \equiv m 
+		\; (\mathrm{mod} \; n)$.
+	\end{propo}
+
+	\dem Aqu\'{i}, $G$ es grupo y $a \in G$ es un elemento de orden finito. Si $a^{n} = e$, dividimos $n$ entre $|a|$
+	$$
+	n = k \cdot |a| + r, \quad \text{con} \; 0 \leq r < |a| 
+	$$
+	Luego
+	\begin{gather*}
+		e = a^{n} = a^{k\cdot |a| +r} = (a^{|a|})^{k} \cdot a^{r} = e^{k} \cdot a^{r} = a^{r}
+	\end{gather*}
+	Por ello, $a^{r} = e$ y $0 \leq r \leq |a|$, por minimalidad de $|a|$, $r=0$, y $n = k|a|$, y llegamos a que $|a|$ divide a $n$.
+	Claramente tambi\'{e}n, si $|a|$ divide a $n$ entonces $a^{n} = e$. En particular
+	\begin{gather*}
+		a^{n} = a^{m} \iff a^{n-m} = e \iff |a| \; | \; n-m \iff n \equiv m \; (\mathrm{mod} \; n)
+	\end{gather*}
+
+	\begin{propo}
+		Sea $G$ grupo y $a \in G$ un elemento con orden $|a| = n$. Entonces $a^{-1} = a^{n-1}$.
+	\end{propo}
+	
+	\dem
+	\begin{gather*}
+		|a| = n \iff a \underbrace{\cdots}_{n \text{ veces}} a = a \cdot a^{n-1} = e \implies a^{-1} = a^{n-1}
+	\end{gather*}
+
+	\begin{prdad}
+		Si $\nexists a \in G$ tal que $|a| = |G|$, entonces $G$ no es un grupo c\'{i}clico.
+	\end{prdad}
+	
+	\begin{teoma}
+		El orden de un elemento coincide con el orden del subgrupo que genera. Notar que entonces los elementos $e, a, a^2, \ldots, a^{|a|-1}$
+		son distintos entre s\'{i}.
+	\end{teoma}
+
+	\dem Si $|a| = n$ finito, entonces
+	$$
+	\langle a \rangle = \{a, a^2, \ldots, a^{|a|} = e\}
+	$$
+	tiene a lo sumo $|a|$ elementos. Si existen $i,j \in \mathbb{N}$ distintos tal que $a^{i} = a^{j}$, con $1 \leq i < j \leq |a|$, entonces $a^{j-i} = e$,
+	con $1 \leq j-i \leq |a|-1$. Esto es imposible, por la minimalidad de $a^{|a|} = e$. Por lo que $\langle a \rangle$ tiene
+	$|a|$ elementos. Si $|a| = \infty$, entonces $\langle a \rangle = \{a^{n} | n \in \mathbb{Z}\}$ tiene orden $\infty$.
+
+	\begin{corol}
+		En un grupo $G$, el orden de cualquiera de sus elementos tiene que dividir al orden del grupo. Adem\'{a}s, $a^{|G|} = e \; \forall a \in G$.
+	\end{corol}
+
+	\dem Sea $G$ grupo finito, y $a \in G$. Sabemos que $|a| = |\langle a \rangle|$ que por el teorema de Lagrange, divide a $|G|$. Por ello
+	$$
+	|a| \; | \; |G|
+	$$
+	y por tanto, $a^{|G|} = e$
+
+	\begin{corol}
+		\begin{enumerate}
+			\item Teorema de Euler-Fermat. Sea $n \geq 2, a \in \mathbb{Z}$, coprimos entre s\'{i}. Se tiene que $a^{\varphi(n)} \equiv 1
+			\; (\mathrm{mod} \; n)$
+			\item Peque\~{n}o teorema de Fermat. Sea $p$ primo que no divide a $a \in \mathbb{Z}$. Entonces $a^{p-1} \equiv 1 \; (\mathrm{mod} \; p)$
+		\end{enumerate}
+	\end{corol}
+
+	\dem Para $U(n) = \{\overline{a} \in \mathbb{Z}_n | \; \overline{a} \text{ es invertible}\}$. Sabemos que $|U(n)| = \varphi(n)$. Por el resultado
+	anterior
+	$$
+	\overline{a}^{|U(n)|} = \overline{1}
+	$$
+	Por lo que
+	$$
+	a^{\varphi(n)} \equiv 1 \; (\text{mod }n)
+	$$
+	si $\mathrm{mcd(a,n) = 1}$
+
+	\begin{corol}
+		Si el orden de un grupo es un n\'{u}mero primo, entonces es un grupo c\'{i}clico.
+	\end{corol}
+
+	\dem Aqu\'{i} $|G| = p$ primo. Sea $a \in G$, $a \neq e$. Como $|\langle a \rangle| \; | \; |G| = p$, por el teorema de Lagrange,
+	$|\langle a \rangle| = 1$ \'{o} $p$. Como $e,a \in \langle a \rangle$, $|\langle a \rangle| \geq 2$, por lo que $|\langle a \rangle| = p = |G|$, y
+	llegamos a que $G = \langle a \rangle$, y por tanto, $G$ es c\'{i}clico.
+
+	\begin{teoma}
+		Sea $a$ un elemento de orden finito de un grupo, y $k \in \mathbb{N}$. Se tiene que $|a^{k}| = \dfrac{|a|}{\mathrm{mcd}(|a|,k)}$
+	\end{teoma}
+
+	\dem
+	\begin{gather*}
+		(a^{k})^{n} = e \iff a^{kn} = e \iff |a| \; | \; kn \iff \dfrac{|a|}{\mathrm{mcd}(|a|,k)} \; | \; \dfrac{k}{\mathrm{mcd}(|a|,k)} \cdot n \iff \\
+		\iff \dfrac{|a|}{\mathrm{mcd}(|a|,k)} \; | \; n
+	\end{gather*}
+	por lo que $|a^{k}| = \dfrac{|a|}{\mathrm{mcd}(|a|,k)}$
+
+	\textit{Ejemplo} $(\mathbb{Z}_5, +)$ \\
+	$\langle \overline{1} \rangle = \{\overline{1},\overline{2},\overline{3},\overline{4},\overline{5} = \overline{0}\}$, por lo que ese grupo
+	es c\'{i}clico generado por $\overline{1}$. Del mismo modo, $\langle \overline{2} \rangle = \mathbb{Z}_5$. \\
+
+	Sin embargo, si probamos con $(\mathbb{Z}_6, +)$, vemos que solo el $\langle \overline{1} \rangle$ y $\langle \overline{5} \rangle$, ya que
+	son los \'{u}nicos coprimos con 6. Vamos a verlo
+
+	\begin{corol}
+		Sea $G$ un grupo c\'{i}clico de orden $n$, y $a$ un generador de $G$. El conjunto de generadores de $G$ es $\{a^{k} | \mathrm{mcd}(k,n)
+		= 1, 1 \leq k \leq n\}$, por lo que $G$ tiene $\varphi(n)$ generadores.
+	\end{corol}
+
+	\dem Aqu\'{i} $G$ es c\'{i}clico de orden $n$, por lo que $\exists a \in G \text{ t.q. } G = \langle a \rangle$ y $|a| = n$. Un elemento
+	$a^{k}$ genera $G \iff \langle a^{k} \rangle = G \iff \dfrac{n}{\mathrm{mcd}(n,k)} = n \iff \mathrm{mcd}(n,k) = 1$. Es decir,
+	hay tantos generadores de $G$ como coprimos hay de $n$, menores que $n$, que es $\varphi(n)$.
+
+	\begin{propo}
+		Sean $a,b$ elementos de orden finito de un grupo. Si son coprimos entre s\'{i} y conmutan, entonces $|ab| = |a||b|$.
+	\end{propo}
+
+	\dem Aqu\'{i} $G$ es grupo y $a,b \in G$ tienen orden finito, $ab = ba$ y $\mathrm{mcd}(|a|,|b|) = 1$.
+	\begin{gather*}
+		(ab)^{n} = e \implies a^{n}b^{n} = e \implies a^{n} = b^{-n} \\
+	\end{gather*}
+	Por ello,
+	\begin{gather*}
+		(a^{n})^{|b|} = \begin{cases}
+			a^{n|b|} \\
+			(b^{-n})^{|b|} = b^{-|b|n} = e
+		\end{cases} \implies
+		|a| \; | \; n|b| \underset{\mathrm{mcd}(|a|,|b|=1)}{\implies} |a| \; | \; n
+	\end{gather*}
+	Haciendo lo mismo con $b$, sacamos que $|b| \; | \; n$, y por ello, $n$ es m\'{u}ltiplo de $|a||b|$. Como $(ab)^{|a||b|} = a^{|a||b|} b^{|a||b|} = e$,
+	entonces $|a||b|$ es el menor $n \geq 1$ tal que $(ab)^{n} = e$, por lo que $|ab| = |a||b|$.
+
+	\begin{lema}
+		Todo subgrupo de un grupo c\'{i}clico es c\'{i}clico
+	\end{lema}
+	
+	\dem Aqu\'{i} $G$ es un grupo c\'{i}clico, por lo que $G = \langle a \rangle$ para alg\'{u}n $a \in G$, y $H$ es un subgrupo de $G$. Vamos a ver que $H$
+	es c\'{i}clico. Si $H = \{e\}$, entonces es c\'{i}clico. Si $H \neq \{e\}$, consideramos $a^{k} \in H$ con $k$ m\'{i}nimo, $k \geq 1$.
+	Dado $b \in H$, $b = a^{j}$ para alg\'{u}n $j \in \mathbb{Z}$. Dividimos $j$ entre $k$.
+	$$
+	j = qk + r, \text{ con } 0 \leq r < k
+	$$
+	por lo que
+	\begin{gather*}
+		b = a^{j} = a^{qk+r} = (a^{k})^{q} a^{r} \therefore a^{r} = (a^{k})^{-q} \cdot b \in H
+	\end{gather*}
+	Por minimalidad de $k$, necesitamos que $r=0$, lo que hace que
+	\begin{gather*}
+		b = a^{j} = (a^{k})^{q} \in \langle a^{k} \rangle \therefore H \subseteq \langle a^{k} \rangle \subseteq H \\
+		\therefore H = \langle a^{k} \rangle
+	\end{gather*}
+	Por lo que $H$ es c\'{i}clico.
+	
+	\begin{teoma}
+		Sea un grupo c\'{i}clico $G$ de orden $n$ y $a$ un generador suyo. Para cada divisor $d$ de $n$, existe un \'{u}nico subgrupo de $G$
+		de orden $d$, que es $\langle a^{n/d} \rangle$. Adem\'{a}s, estos son los \'{u}nicos subgrupos de $G$.
+	\end{teoma}
+
+	\dem Aqu\'{i} $G = \langle a \rangle$ con $|G| = n$, y $d$ es divisor de $n$. Veamos que $|\langle a^{n/d} \rangle| = d$.
+	\begin{gather*}
+		|\langle a^{n/d} \rangle| = |a^{n/d}| = \dfrac{|a|}{\mathrm{mcd}(|a|,n/d)} = \dfrac{n}{\mathrm{mcd}(n,n/d)} = \dfrac{n}{n/d} = d
+	\end{gather*}
+
+	Veamos que $\langle a^{n/d} \rangle$ es el \'{u}nico subgrupo de $G$ con $d$ elementos. Sea $H \leq G$, $|H| = d$. Sabemos que $H$
+	debe ser c\'{i}clico $\therefore H = \langle a^{m} \rangle$ para alg\'{u}n $m$. Tenemos
+	\begin{gather*}
+		d = |H| = |a^{m}| = \dfrac{|a|}{\mathrm{mcd}(n,m)} = \dfrac{n}{\mathrm{mcd}(n,m)} \therefore \\
+		\mathrm{mcd}(n,m) = \dfrac{n}{d} \therefore \dfrac{n}{d} | m \therefore \exists k \text{ t.q. } m=\dfrac{n}{d}k \therefore \\
+		a^{m}=a^{\frac{n}{d} \cdot k} = (a^{\frac{n}{d}})^{k} \therefore a^{m} \in \langle a^{\frac{n}{d}} \rangle \therefore \\
+		H \subseteq \langle a^{\frac{n}{d}} \rangle
+	\end{gather*}
+	Como $|H| = d = |\langle a^{\frac{n}{d}} \rangle|$, entonces $H = \langle a^{\frac{n}{d}} \rangle$.
+
+	\textit{Ejemplo:} $(\mathbb{Z}_{12},+)$ \\
+
+	$\mathbb{Z}_{12}$ es grupo c\'{i}clico, generado por $\langle \overline{1} \rangle$. Los divisores de 12 son 1,2,3,4,6,12.
+	\begin{itemize}
+		\item Orden 1: $\langle \overline{0} \rangle$
+		\item Orden 2: $\langle \overline{6} \rangle$
+		\item Orden 3: $\langle \overline{4} \rangle$
+		\item Orden 4: $\langle \overline{3} \rangle$
+		\item Orden 6: $\langle \overline{2} \rangle$
+		\item Orden 12: $\langle \overline{1} \rangle$
+	\end{itemize}
+
+	\begin{teoma}
+		Sea $F$ un cuerpo y $G \subseteq F \setminus \{0\}$ un subgrupo multiplicativo finito. $G$ es un grupo c\'{i}clico.
+	\end{teoma}
+
+	\dem $F$ es cuerpo, y $G \leq (F \setminus \{0\}, \cdot)$
+	Veamos que $G$ es c\'{i}clico. Observamos que:
+	\begin{enumerate}
+		\item $G$ es abeliano, por serlo $(F \setminus \{0\},\cdot)$
+		\item Sobre un cuerpo, un polinomio tiene a lo sumo tantas ra\'{i}ces como su grado.
+	\end{enumerate}
+
+	Como $G$ es finito, existe $a \in G$ con $|a|$ m\'{a}ximo. Veamos que $\forall b \in G, |b|$ divide a $|a|$ (\textit{no demostrado del todo}).
+	As\'{i} $\forall b \in G, b^{|a|} = 1 \therefore$ todo elemento de $G$ es un elemento de $F$ ra\'{i}z de
+	$$
+	x^{|a|} - 1
+	$$
+	Como en $F$ el polinomio $x^{|a|} - 1$ tiene a lo sumo $|a|$ ra\'{i}ces entonces
+	\begin{gather*}
+		|G| \leq |a| = |\langle a \rangle| \leq |G| \therefore |G| = |\langle a \rangle| \therefore G = \langle a \rangle
+	\end{gather*}
+
+	\textit{Ejemplo: } Calculamos los subgrupos de $D_n$. \\
+
+	Sea $S \leq D_n = \{\underbrace{R,R^2,\ldots,R^{n}=I}_{\text{rotaciones}},\underbrace{H,HR,\ldots,HR^{n-1}}_{\text{reflexiones}}\}$.
+	Pueden ocurrir dos cosas:
+	\begin{enumerate}
+		\item $S$ no contiene reflexiones $\therefore S \leq \langle R \rangle \therefore S = \langle R^{d} \rangle$ donde $d$ es un
+			divisor de $n$ (y tiene $\frac{n}{d} elementos)$.
+		\item $S$ contiene alguna reflexi\'{o}n $\sigma$. Sean
+			\begin{gather*}
+				S_+ := S \cap \{R,R^2,\ldots,R^{n}\} = S \cap \langle R \rangle \leq \langle R \rangle \\
+				S_- := S \cap \{H,HR,\ldots,HR^{n-1}\} \\
+				\therefore S = S_+ \sqcup S_-
+			\end{gather*}
+	\end{enumerate}
+	Veamos en este segundo caso que $S_- = \sigma S_+$
+	\begin{gather*}
+		\underbrace{\sigma}_{\in S} \underbrace{S_+}_{\subseteq S} \underbrace{\subseteq}_{S \text{ subg.}} S_- \\
+		\sigma S_- \subseteq S_+ \implies S_- \subseteq \sigma S_+ \\
+		\therefore S_- \subseteq \sigma S_+ \subset S_- \\
+		\therefore S_- = \sigma S_+
+	\end{gather*}
+
+	Como $S_+ \leq \langle R \rangle$ entonces $S_+ = \langle R^{d} \rangle$ para alg\'{u}n $d$ divisor de $n$.
+	$$
+	S = \langle R^{d} \rangle \sqcup \sigma \langle R^{d} \rangle
+	$$
+	Como $\sigma$ es reflexi\'{o}n $\sigma = HR^{i}$ para alg\'{u}n $i \in \{0,1,\ldots,n-1\}$. Multiplicando $\sigma$ a derecha
+	por $R^{-d} \in S_+$ las veces precisas encontramos $\sigma_0 \in S_-$ con $\sigma_0 = HR^{i}$, con $i \in \{0,1,\ldots,d-1\}$.
+	Por tanto $S_{d,i}$ con $0 \leq i \leq d$, $S_{d,i} := S = \langle R^{d} \rangle \sqcup \sigma_0 \langle R^{d} \rangle$.
+	Y $\sigma_0 = HR^{i}$ con $i \in \{0,\ldots,n-1\}$. Veamos que estos subgrupos son distintos entre s\'{i}, y
+	son todos los de $D_n$.
+
+	\textbf{No acabado en clase}
+
+	\subsection{Grupos sim\'{e}tricos}
+
+	\begin{defin}
+		Dado un conjunto $X$, una \textit{permutaci\'{o}n} de $X$ es una biyecci\'{o}n de $X$ en $X$. El \textit{grupo de permutaciones}
+		de $X$ es el conjunto $S_X = \{\alpha:X \to X | \alpha \text{ es biyecci\'{o}n}\}$, con la composici\'{o}n. El \textit{grupo
+		sim\'{e}trico de grado $n$} es el grupo de permutaciones de $X_n = \{1,\ldots,n\}$ y se denota $S_n$.
+	\end{defin}
+
+	\textit{Ejemplo: } Con $S_5$, podemos considerar la permutaci\'{o}n:
+	\begin{align*}
+		f: \{1,2,3,4,5\} & \to \{1,2,3,4,5\} \\
+		1 & \mapsto 4 \\
+		2 & \mapsto 3 \\
+		3 & \mapsto 5 \\
+		4 & \mapsto 2 \\
+		5 & \mapsto 1 \\
+	\end{align*}
+	Que podemos escribir como:
+	$$
+	f = \begin{bmatrix}
+	1 & 2 & 3 & 4 & 5 \\
+	4 & 3 & 5 & 2 & 1 \\
+	\end{bmatrix}
+	$$
+
+	\begin{propo}
+		Sea $X = \{x_1,\ldots,x_n\}$ un conjunto con $n$ elementos. La aplicaci\'{o}n $f: X \to X_n$ definida por $f(x_i) = i$ induce un isomorfismo
+		de grupos $S_X \to S_n$ dado por $\alpha \mapsto f \alpha f^{-1}$
+	\end{propo}
+
+	\dem Aqui $X = \{x_1,\ldots,x_n\}$, y $f(x_i) = i$. Veamos que $\varphi:S_X \to S_n, \; \varphi(\alpha) \mapsto f \alpha f^{-1}$ es biyecci\'{o}n.
+
+	\begin{gather*}
+		f \alpha f^{-1} \in S_n \\
+		f \alpha f^{-1} : \{1,\ldots,n\} \overset{f^{-1}}{\to} X \overset{\alpha}{\to} X \overset{f}{\to} \{1,\ldots,n\}
+	\end{gather*}
+	$f \alpha f^{-1}$ es biyectiva con inversa $f \alpha^{-1} f^{-1}$
+	\begin{gather*}
+		f \alpha f^{-1} \circ f \alpha^{-1} f^{-1} = \mathrm{Id} = f \alpha^{-1} f^{-1} \circ f \alpha f^{-1}
+	\end{gather*}
+	
+	Veamos que $\varphi$ es biyectiva.
+	\begin{itemize}
+		\item \textit{Inyectiva:} si $\varphi(\alpha) = \varphi(\alpha')$ entonces
+			$$
+			f \alpha f^{-1} = f \alpha' f^{-1} \therefore \alpha = \alpha'
+			$$
+		\item \textit{Suprayectiva:} dado $\beta \in S_n$
+			\begin{gather*}
+				\beta = f (f^{-1} \beta f) f^{-1} = \varphi(f^{-1} \beta f) \\
+				f^{-1} \beta f \in S_X \therefore \alpha := f^{-1} \beta f
+			\end{gather*}
+	\end{itemize}
+	Por lo que $\varphi$ es suprayectiva. \\
+
+	Veamos que $\varphi$ es isomorfismo de grupos. Dado $\alpha,\alpha' \in S_X$
+	\begin{gather*}
+		\varphi(\alpha \alpha') = f \circ (\alpha \alpha') \circ f^{-1} = f \alpha f^{-1} f \alpha' f^{-1} = \varphi(\alpha) \varphi(\alpha')
+	\end{gather*}
+	Como $\varphi$ es biyectiva, $\varphi$ es isomorfismo de grupos, por lo que
+	\begin{gather*}
+		S_X \cong S_n, \quad n = |X|
+	\end{gather*}
+	
+	\begin{teoma}
+		Todo grupo es isomorfo a un subgrupo de un grupo de permutaciones.
+	\end{teoma}
+
+	\dem Sea $G$ un grupo cualquiera. Para cada $g \in G$, consideramos
+	\begin{align*}
+		L_g: G & \to G \\
+		g' & \mapsto gg'
+	\end{align*}
+
+	Veamos que $L_g$ es biyectiva. Su inversa es $\left( L_g \right)^{-1} = L_{g^{-1}}$
+	\begin{gather*}
+		L_g \circ L_{g^{-1}}(g') = L_g(g^{-1}g') = g(g^{-1}g') = g' = L_{g^{-1}} L_g(g')\\
+		\therefore \left( L_g \right)^{-1} = L_{g^{-1}}
+	\end{gather*}
+	Sea $L_G := \{L_g | g \in G\} \subseteq S_G$. Veamos que $L_G$ es subgrupo de $S_G$. Claramente $L_G \neq \varnothing$, ya que
+	$G \neq \varnothing$. Dados $g_1,g_2 \in G$
+	\begin{gather*}
+		L_{g_1} L_{g_2}(g') = L_{g_1}(g_2 g') = g_1(g_2 g') = (g_1 g_2)g' = L_{g_1 g_2}(g') \\
+		\therefore L_{g_1} L_{g_2} = L_{g_1 g_2} \in L_G \therefore \; \text{cerrado por productos} \\
+		\left( L_{g_1} \right)^{-1} = L_{g_1^{-1}} \in L_G \therefore \; \text{cerrado por inversos}
+	\end{gather*}
+	Luego $L_G$ es subgrupo de $S_G$. Ahora, veamos que $L_G \cong G$. Consideramos la aplicaci\'{o}n
+	\begin{align*}
+		L: G & \to L_G \\
+		g & \mapsto L_g
+	\end{align*}
+	que es isomorfismo de grupos. Claramente es suprayectiva. Tambi\'{e}n es inyectiva ya que
+	\begin{gather*}
+		L_{g_1} = L_{g_2} \implies g_1e = g_2e \implies g_1 = g_2
+	\end{gather*}
+	por lo que $L$ es biyectiva. Ahora, vemos que conserva el producto, ya que $\forall g_1,g_2 \in G$
+	\begin{gather*}
+		L_{g_1 g_2} = L_{g_1} L_{g_2}
+	\end{gather*}
+	por lo que ya hemos visto. Por ello, $G \cong L_G \leq S_G$
+	
+	\begin{defin}
+		Un elemento $x \in X$ es \textit{fijo} por $\alpha \in S_X$, o $\alpha$ fija $x$ si $\alpha(x) = x$. Si no, decimos que
+		$\alpha$ \textit{mueve} $x$. Dos permutaciones son \textit{disjuntas} si mueven conjuntos disjuntos
+		de elementos.
+	\end{defin}
+
+	\begin{propo}
+		Dos permutaciones disjuntas de un mismo conjunto conmutan.
+	\end{propo}
+
+	\dem Sean $\alpha,\beta: X \to X$ permutaciones disjuntas. Veamos que $\alpha(\beta(x)) = \beta(\alpha(x)) \forall x \in X$. Distinguimos
+	tres casos.
+	\begin{enumerate}
+		\item Si $\alpha(x) \neq x$. Entonces
+			\begin{gather*}
+				\alpha(\alpha(x)) \neq \alpha(x) \therefore \beta(x) = x \land \beta(\alpha(x)) = \alpha(x)
+			\end{gather*}
+			por ser $\alpha,\beta$ disjuntos $\therefore$
+			\begin{gather*}
+				\alpha(\beta(x)) = \alpha(x) = \beta(\alpha(x))
+			\end{gather*}
+
+		\item Si $\beta(x) \neq x$. Es al caso an\'{a}logo.
+		\item Si $\alpha(x) = \beta(x) = x$.
+			\begin{gather*}
+				\alpha(\beta(x)) = \alpha(x) = x = \beta(x) = \beta(\alpha(x))
+			\end{gather*}
+	\end{enumerate}
+	$\therefore$ siempre ocurre que $\alpha(\beta(x)) = \beta(\alpha(x)) \; \forall x \in X$
+
+	\begin{defin}
+		Un \textit{ciclo de longitud r} o un \textit{r-ciclo} es una permutaci\'{o}n de un conjunto $X$ para la cual
+		existe $x \in X$ tal que $\{x,\alpha(x),\ldots,\alpha^{r-1}(x)\}$ son distintos, pero $\alpha^{r}(x) = x$,
+		y el resto de elementos de $X$ son fijos. Se suele denotar con la tupla:
+		$$
+		(x,\alpha(x),\ldots,\alpha^{r-1}(x))
+		$$
+		Un 2-ciclo es una \textit{transposici\'{o}n}.
+	\end{defin}
+	
+	\begin{propo}
+		El orden de un r-ciclo es $r$.
+	\end{propo}
+
+	\dem Sea $\sigma$ un r-ciclo:
+	$$
+	\sigma = (a_1,\ldots,a_r)
+	$$
+	y
+	\begin{gather*}
+		\begin{rcases}
+			\sigma(a_1) = a_2 \\
+			\sigma^{2}(a_1) = a_3 \\
+			\vdots \\
+			\sigma^{r-1}(a_1) = a_r \\
+			\sigma^{r}(a_1) = a_1
+		\end{rcases} \implies \sigma^{i}(a_1) \neq a_1 \forall i=1,\ldots,r-1 \therefore \sigma^{i} \neq \mathrm{I} \forall i=1,\ldots,r-1 \\
+		\therefore |\sigma^{i}| \geq r
+	\end{gather*}
+	Adem\'{a}s
+	\begin{gather*}
+		\sigma^{r}(a_i) = a_i \forall i = 1,\ldots,r \\
+		\sigma^{r}(x) = x, \; x \notin \{a_1,\ldots,a_r\} \\
+		\therefore \sigma^{r } = \mathrm{I} \therefore |\sigma| = r
+	\end{gather*}
+	
+	
+
+	\begin{propo}
+		Dada $\alpha$ permutaci\'{o}n de $X$, $x_0 \in X$ tal que
+		$$
+		\underbrace{x_0,\alpha(x_0),\ldots,\alpha^{r-1}(x_0)}_{\text{distintos}}
+		$$
+		pero $\alpha^{r}(x_0)$ est\'{a} repetido, entonces $\alpha^{r}(x_0) = x_0$.
+	\end{propo}
+
+	\dem Esto pasa ya que si $\alpha^{r}(x_0) = \alpha^{i}(x_0)$ para alg\'{u}n $0 \leq i \leq r-1$,
+	podemos hacer $\alpha^{r-i}(x_0) = x_0 \therefore$ al ser todos distintos, solo queda que $\alpha^{r}(x_0) = x_0$
+
+
+	\begin{teoma}
+		Toda permutaci\'{o}n de un conjunto finito distinto de la identidad es producto de uno o m\'{a}s ciclos disjuntos
+		de longitud $\geq 2$. Adem\'{a}s, esta descomposici\'{o}n es \'{u}nica salvo el orden de los factores (por ser a su vez
+		permutaciones disjuntas).
+	\end{teoma}
+
+	\dem Dada una permutaci\'{o}n $\alpha$ de $X$ definimos:
+	$$
+	M_{\alpha} := \{x \in X | \alpha(x) \neq x\}
+	$$
+	Vamos a probar por induci\'{o}n en el tama\~{n}o de $M_{\alpha}$ que, o bien $\alpha = \mathrm{I}$, o bien
+	$\alpha$ es producto de ciclos disjuntos de longitud $\geq 2$ con entradas en $M_{\alpha}$. \\
+	Si $|M_{\alpha}| = 0$, entonces todos los elementos son fijos, y $\alpha = \mathrm{I}$. Si suponemos demostrado el caso 0, vemos el paso
+	de inducci\'{o}n. Asumimos que $|M_{\alpha}| \geq 1 \therefore \exists x_0 \in M_{\alpha}$, es decir, $x_0 \neq \alpha(x_0)$. Como $X$ es finito,
+	$\exists r \geq 2 \text{ t.q. } x_0,\alpha(x_0),\ldots,\alpha^{r-1}(x_0)$ son distintos, pero no lo es $\alpha^{r}(x_0)$. Como hemos visto,
+	al llegar este caso, tenemos que $\alpha^{r}(x_0) = x_0$. Formamos un ciclo $\sigma$
+	$$
+	\sigma := (x_0,\alpha(x_0),\ldots,\alpha^{r-1}(x_0)).
+	$$
+	Consideramos $\alpha \sigma^{-1}$. Observamos que
+	\begin{gather*}
+		\alpha \sigma^{-1}(\alpha^{i}(x_0)) = \alpha(\alpha^{i-1}(x_0)) = \alpha^{i}(x_0) \\
+		\therefore x_0,\ldots,\alpha^{r-1}(x_0) \notin M_{\alpha \sigma^{-1}}
+	\end{gather*}
+	Veamos que $M_{\alpha \sigma^{-1}} \subseteq M_{\alpha} \setminus \{x_0,\ldots,\alpha^{r-1}(x_0)\}$.
+	En efecto, dado $x \in M_{\alpha \sigma^{-1}}$, por lo anterior, $x \notin \{x_0,\ldots,\alpha^{r-1}(x_0)\} \therefore \sigma(x) = x \therefore
+	\sigma^{-1}(x) = x \therefore x \neq \alpha \sigma^{-1}(x) = \alpha(x) \therefore x \in M_{\alpha} \therefore
+	M_{\alpha \sigma^{-1}} \subseteq M_{\alpha} \setminus \{x_0,\ldots,\alpha^{r-1}(x_0)\}$. As\'{i}, $|M_{\alpha \sigma^{-1}}| < |M_{\alpha}| \therefore$
+	por la hip\'{o}tesis de inducci\'{o}n o bien $\alpha \sigma^{-1} = \mathrm{Id}$ (en cuyo caso $\alpha = \sigma$ y hemos acabado)
+	o bien $\alpha \sigma^{-1} = \sigma_1 \cdots \sigma_{l-1}$ producto de ciclos de longitud $ \geq 2$ disjuntos
+	con entradas en $M_{\alpha \sigma^{-1}} \therefore \alpha = \sigma_1 \cdots \sigma_{l-1} \sigma$ producto de ciclos
+	disjuntos de longitud $\geq 2$ con entradas en $M_{\alpha}$. Con esto, aseguramos existencia. Vamos con la unicidad. \\
+
+	Sea $\alpha$ una permutaci\'{o}n de $X$, $\alpha \neq \mathrm{Id}$ y 
+	$$
+	\alpha = \sigma_1 \cdots \sigma_{l} = \sigma'_1 \cdots \sigma'_{l'}
+	$$
+	con $\sigma_1 \cdots \sigma_{l}$ ciclos disjuntos de lo longitud $\geq 2$, y lo mismo para los $\sigma'$. Como $\alpha \neq \mathrm{Id},
+	\exists x_0 \text{ t.q. } \alpha(x_0) \neq x_0 \therefore$ existe $\sigma_i$ tal que $\sigma_i \text{ t.q. } \sigma_i(x_0) \neq x_0$.
+	Como $\sigma_1 \cdots \sigma_{l}$ conmutan entre s\'{i}, sin p\'{e}rdida de generalidad podemos asumir que $\sigma_1(x_0) \neq x_0 \therefore$
+	los dem\'{a}s $\sigma$ lo fijan. Igualmente, podemos asumir que $\sigma'_1(x_0) \neq x_0$. Por esto,
+	$\alpha(x_0) = \sigma_1 \cdots \sigma_{l}(x_0) = \sigma_1(x_0) \therefore \alpha(x_0)$ es una entrada de $\sigma_1$ por lo que 
+	$\sigma_2 \cdots \sigma_{l}$ lo fijan $\therefore$
+	$$
+	\alpha^2(x_0) = \alpha(\alpha(x_0)) = \alpha(\sigma_1(x_0)) = \sigma_1(\sigma_1(x_0))
+	$$
+	As\'{i}, podemos ir construyendo y llegar a que
+	$$
+	\sigma_1 = (x_0,\alpha(x_0),\alpha^2(x_0),\ldots,\alpha^{r-1}(x_0))
+	$$
+	donde $r$ es el menor natural $\geq 2$ tal que $\alpha^{r}(x_0) = x_0$. Podemos hacer lo mismo con $\sigma'_1$
+	$$
+	\sigma'_1 = (x_0,\alpha(x_0),\alpha^2(x_0),\ldots,\alpha^{r-1}(x_0)) = \sigma_1
+	$$
+	y llegamos a que
+	\begin{gather*}
+		\sigma_1 = \sigma'_1 \\
+		\sigma_2 \cdots \sigma_l = \sigma'_2 \cdots \sigma'_{l'}
+	\end{gather*}
+	Sin p\'{e}rdida de generalidad, podemos asumir que $l \leq l'$. Repitiendo para $\sigma_2 = \sigma_2',\ldots$ y
+	\begin{gather*}
+		\mathrm{Id} = \sigma_{l+1}' \cdots \sigma_{l'}'
+	\end{gather*}
+	
+
+	\textit{Nota: }
+	\begin{gather*}
+		\sigma = (a_1,\ldots,a_r) \implies \sigma^{-1} = (a_r,a_{r-1},\ldots,a_1)
+	\end{gather*} \\
+
+	\textit{Nota: } Si $\sigma = \sigma_1 \cdots \sigma_l$ producto de ciclos disjuntos, entonces $|\sigma| = \mathrm{mcm}(|\sigma_1|,\ldots,|\sigma_l|)$.
+	Por un lado
+	\begin{gather*}
+		\sigma^{\mathrm{mcm}(|\sigma_1|,\ldots,|\sigma_l|)} = \sigma_1^{\mathrm{mcm}(|\sigma_1|,\ldots,|\sigma_l|)} \cdots
+		\sigma_l^{\mathrm{mcm}(|\sigma_1|,\ldots,|\sigma_l|)} = \mathrm{Id} \cdots \mathrm{Id} = \mathrm{Id} \\
+		\therefore |\sigma| \leq \mathrm{mcm}(|\sigma_1|,\ldots,|\sigma_l|)
+	\end{gather*}
+	Por otro lado, si $\sigma^{k} = \mathrm{Id}$, entonces
+	\begin{gather*}
+		\sigma_1^{k} \cdots \sigma_l^{k} = \mathrm{Id} \quad (*)
+	\end{gather*}
+	Analizamos $\sigma_1^{k}$. Dadaa $x \in X$:
+	\begin{gather*}
+		\begin{cases}
+			\text{si} \; \sigma_1(x) = x \; \text{entonces} \; \sigma_1^{k} = x \\
+			\text{si} \; \sigma_1(x) \neq x \; \text{entonces} \; \sigma_2(x) = \ldots = \sigma_l(x) = x
+		\end{cases}
+	\end{gather*}
+	$\therefore$ por (*), tenemos
+	\begin{gather*}
+		\sigma_1^{k}(x) = x \therefore \sigma_1^{k}(x) = x \; \forall x \therefore \sigma_1^{k} = \mathrm{Id}
+	\end{gather*}
+	An\'{a}logamente, $\sigma_i^{k} = \mathrm{Id}$, por lo que $k$ es m\'{u}ltiplo de
+	$|\sigma_1|,\ldots,|\sigma_l|$, y $|\sigma| \geq \mathrm{mcm}(|\sigma_1|,\ldots,|\sigma_l|)$, y $|\sigma| = \mathrm{mcm}(|\sigma_1|,\ldots,|\sigma_l|)$
+	
+	\begin{corol}
+		Toda permutaci\'{o}n de un conjunto finito es producto de trasposiciones
+	\end{corol}
+
+	\dem Observamos que si $a_1,\ldots,a_r$ son elementos distintos.
+	\begin{gather*}
+		(a_1,a_2)(a_2,a_3)\cdots(a_{r-2},a_{r-1})(a_{r-1},a_r) \\
+		a_1 \mapsto a_2 \\
+		a_2 \mapsto a_3 \\
+		\vdots \\
+		a_{r-1} \mapsto a_r \\
+		a_r \mapsto a_1 \\
+		x \notin \{a_1,\ldots,a_r\} \mapsto x
+	\end{gather*}
+	$\therefore$ eso es el ciclo $(a_1,a_2,\ldots,a_r)$, por lo que todo ciclo es un producto de trasposiciones. Como toda permutaci\'{o}n es
+	producto de ciclos, entonces toda permutaci\'{o}n es producto de trasposiciones.
+
+	\begin{defin}
+		La \textit{signatura} de una permutaci\'{o}n $\sigma \in S_n$ es
+		$$
+		\varepsilon(\sigma) = \prod_{1 \leq i < j \leq n}^{} \frac{\sigma(i) - \sigma(j)}{i-j} \in \{-1,1\}
+		$$
+	\end{defin}
+
+	\textit{Nota: } Observamos que si $\sigma \in S_n$.
+	\begin{gather*}
+		\{1,\ldots,n\} = \{\sigma(1),\ldots,\sigma(n)\} \\
+		\therefore P := \{S \subset X_n | |S| = 2\} \\
+		= \{\{i,j\} | 1 \leq i < j \leq n\} \quad \text{(descr. 1)} \\
+		= \{\{\sigma(i),\sigma(j)\} | 1 \leq i < j \leq n\} \quad \text{(descr. 2)}
+	\end{gather*}
+	Luego, tenemos
+	\begin{gather*}
+		\varepsilon(\sigma)^2 = \prod_{1 \leq i < j \leq n}^{} \frac{(\sigma(i) - \sigma(j))^2}{(i-j)^2} =
+		\frac{\prod_{1 \leq i < j \leq n}^{} (\sigma(i) - \sigma(j))^2}{\prod_{1 \leq i < j \leq n}^{} (i - j)^2}
+	\end{gather*}
+	Considerar $f(\{i,j\}) := (i-j)^2$ para cada $\{i,j\} \in P$ (bien definida por el cuadrado). $\therefore$
+	\begin{gather*}
+		\varepsilon(\sigma)^2 = \frac{\prod_{S \in P}^{} f(S) \leftarrow \text{desc. 2}}{\prod_{S \in P}^{} f(S) \leftarrow \text{desc. 1}} = 1
+	\end{gather*}
+	Luego $\varepsilon(\sigma) \in \{-1,1\}$
+	
+	\begin{propo}
+		Para cualesquiera $\sigma,\tau \in S_n$ se tiene que $\varepsilon(\sigma \tau) = \varepsilon(\sigma) \varepsilon(\tau)$
+	\end{propo}
+
+	\dem Dadas $\sigma,\tau \in S_n$
+	\begin{gather*}
+		\varepsilon(\sigma \tau) = \prod_{1 \leq i < j \leq n}^{} \frac{\sigma \tau(i) - \sigma \tau(j)}{i - j} = \\
+		= \prod_{1 \leq i < j \leq n}^{} \frac{\sigma \tau(i) - \sigma \tau(j)}{\tau(i) - \tau(j)} \cdot \frac{\tau(i) - \tau(j)}{i-j}= \\
+		= \left( \prod_{1 \leq i < j \leq n}^{} \frac{\sigma \tau(i) - \sigma \tau(j)}{\tau(i) - \tau(j)} \right) \varepsilon(\tau) = (*)
+	\end{gather*}
+	Consideramos $f_{\sigma}(\{i,j\}) = \frac{\sigma(i) - \sigma(j)}{i-j}$, que est\'{a} bien definida y de hecho, sabemos
+	\begin{gather*}
+		\varepsilon(\sigma) = \prod_{S \in P}^{} f_{\sigma}(S) = \prod_{1 \leq i < j \leq n}^{} f_{\sigma}(\{i,j\}) = \\
+		= \prod_{1 \leq i < j \leq n}^{} \frac{\sigma(\tau(i)) - \sigma(\tau(j))}{\tau(i) - \tau(j)} \\
+		\therefore (*) = \varepsilon(\sigma) \varepsilon(\tau)
+	\end{gather*}
+
+	\textit{Nota: } $\varepsilon((1,2)) = -1$. Sea $\sigma = (1,2)$
+	\begin{gather*}
+		\varepsilon(\sigma) = \prod_{1 \leq i < j \leq n}^{} \frac{\sigma(i) - \sigma(j)}{i-j} = \\
+		= \frac{\sigma(1) - \sigma(2)}{1-2} \cdots \frac{\sigma(1) - \sigma(n)}{1-n} \cdot \\
+		\cdot \frac{\sigma(2) - \sigma(3)}{2-3} \cdots \frac{\sigma(2) - \sigma(n)}{2-n} \cdot \\
+		\vdots \\
+		\cdot \frac{\sigma(n-1) - \sigma(n)}{n-1 - n} = \\
+		= \frac{2-1}{1-2} \cdot \frac{2-3}{1-3} \cdot \frac{2-4}{1-4} \cdots \frac{2-n}{1-n} \cdot \\
+		\cdot \frac{1-3}{2-3} \cdot \frac{1-4}{2-4} \cdots \frac{1-n}{2-n} \cdot \\
+		\cdot \frac{3-4}{3-4} \cdots \frac{3-n}{3-n} \cdot \\
+		\vdots \\
+		\cdot \frac{n-1 - n}{n-1-n} = -1
+	\end{gather*}
+	Adem\'{a}s, $\varepsilon(\mathrm{Id}) = 1$, obvio. Veamos que si $i \neq j$ entonces $\varepsilon((i,j)) = -1$. Consideramos
+	la permutaci\'{o}n auxiliar
+	\begin{align*}
+		f: \; & 1 \mapsto i \\
+			 & 2 \mapsto j \\
+			 & \vdots \\
+			 & n \mapsto \ldots
+	\end{align*}
+	donde todos menos 1 y 2 van a otros que no sean $i,j$. Consideramos
+	\begin{align*}
+		f(1,2)f^{-1}: \; & i \mapsto j \\
+				 & j \mapsto i \\
+				 & k \neq i,j \mapsto k 
+	\end{align*}
+	Luego $f(1,2)f^{-1} = (i,j)$, y
+	\begin{gather*}
+		\varepsilon((i,j)) = \varepsilon(f(1,2)f^{-1}) = \varepsilon(f) \varepsilon((1,2)) \varepsilon(f^{-1}) = \\
+		= \varepsilon(f) \varepsilon(f^{-1}) \varepsilon((1,2)) = \\
+		= \varepsilon(\mathrm{Id}) \varepsilon((1,2)) = 1 \cdot (-1) = -1
+	\end{gather*}
+	Y, en general
+	\begin{gather*}
+		\varepsilon\left((a_1,\ldots,a_r)\right) = \varepsilon\left((a_1,a_2),(a_2,a_3) \cdots (a_{r-1},a_r))\right) = (-1)^{r-1}
+	\end{gather*}
+
+	\textit{Nota: } $A_n := \{\sigma \in S_n | \varepsilon(\sigma) = 1\}$ es subgrupo de $S_n$.
+	\begin{gather*}
+		\varepsilon(\mathrm{Id}) = 1 \implies A_n \neq \varnothing \\
+		\sigma,\tau \in A_n, \; \varepsilon(\sigma \tau) = \varepsilon(\sigma) \varepsilon(\tau) = 1 \cdot 1 = 1 \implies \sigma \tau \in A_n \\
+		\sigma \in A_n, \; 1 = \varepsilon(\mathrm{Id}) = \varepsilon(\sigma \sigma^{-1}) =
+		\varepsilon(\sigma) \varepsilon(\sigma^{-1}) = \varepsilon(\sigma^{-1}) \implies \sigma^{-1} \in A_n
+	\end{gather*}
+	
+	\begin{defin}
+		Llamamos \textit{grupo alternado de grado n} al conjunto de permutaciones pares (signatura 1), $A_n$, que es subgrupo de $S_n$.
+	\end{defin}
+
+	\begin{prdad}
+		Para el grupo alternado de grado $n$, tenemos que $|A_n| = \frac{n!}{2}$.
+	\end{prdad}
+
+	\dem Esto se debe a que
+	\begin{align*}
+		\varphi : S_n & \to S_n \\
+		\sigma & \mapsto (1,2)\sigma
+	\end{align*}
+	es una biyecci\'{o}n, que cambia permutaciones pares por impares (y viceversa, al ser su propia inversa). Eso significa que hay tantas permutaciones
+	pares como impares.
+
+	\begin{propo}
+		Dada $\sigma \in S_n$, se tiene que
+		\begin{gather*}
+			\sigma \cdot (a_1,\ldots,a_r) \sigma^{-1} = (\sigma(a_1),\ldots,\sigma(a_r))
+		\end{gather*}
+	\end{propo}
+
+	\dem Dado un $\sigma(a_i)$
+	\begin{gather*}
+		\sigma(a_i) \overset{\sigma^{-1}}{\mapsto} a_i \overset{(a_1,\ldots,a_r)}{\mapsto} a_{i+1} \overset{\sigma}{\mapsto} \sigma(a_{i+1})
+	\end{gather*}
+	y a $x \notin \{\sigma(a_1),\ldots,\sigma(a_r)\}$
+	\begin{gather*}
+		x \mapsto \sigma^{-1}(x) \mapsto \sigma^{-1}(x) \mapsto x
+	\end{gather*}
+
+	\subsection{Subgrupos normales. Grupo cociente.}
+	
+	\begin{defin}
+		Dado un grupo $G$, y subconjuntos $A,B \subseteq G$. Definimos $AB = \{ab | a \in A, b \in B\}$.
+		Aun siendo $A$ y $B$ subgrupos, $AB$ no suele serlo.
+	\end{defin}
+
+	\begin{propo}
+		Para cualesquiera subgrupos $H,K \leq G$, se tiene que $|HK| = \frac{|H||K|}{|H \cap K|}$
+	\end{propo}
+
+	\dem Vamos a ver que con la aplicaci\'{o}n
+	\begin{align*}
+		f: H \times K & \to HK \\
+		(h,k) & \mapsto hk
+	\end{align*}
+
+	Contamos las preim\'{a}genes de $h_0k_0$:
+	\begin{gather*}
+		|\{(h,k) \in H \times K : hk = h_0k_0\}| = (*)
+	\end{gather*}
+	Si $hk = h_0k_0$ entonces
+	\begin{gather*}
+		\underbrace{h_0^{-1}h}_{\in H} = \underbrace{k_0k^{-1}}_{\in K} \in H \cap K \\
+		\therefore \exists x \in H \cap K \text{ t.q. } h_0^{-1}h=k_0k^{-1}=x \therefore h = h_0x, \; k=x^{-1}k_0
+	\end{gather*}
+	Y rec\'{i}procamente, si se cumple $h=h_0x,k=x^{-1}k_0$, entonces $h\in H,k\in K, hk = h_0k_0 \therefore$.
+	\begin{gather*}
+		(*)=|\{(h_0x,x^{-1}k_0):x \in H \cap K\}| = |H \cap K|
+	\end{gather*}
+	y contando todas las preim\'{a}genes de todos los elementos de $HK$
+	\begin{gather*}
+		|H\times K| = |HK||H\cap K| \therefore |HK| = \frac{|H||K|}{|H \cap K|}
+	\end{gather*}
+
+	\begin{defin}
+		Un subgrupo $H$ de un grupo $G$ es un \textit{subgrupo normal} si $aHa^{-1} = H \; \forall a \in G$.
+		Es decir, si $H$ coincide con todos y cada uno de sus conjugados en $G$. Se denota $H \normleq G$.
+	\end{defin}
+
+	\textit{Ejemplos}
+
+	\begin{itemize}
+		\item $H = \{e\}$, ya que $aHa^{-1} = \{a e a^{-1}\} = \{e\} = H$
+		\item $H = G$, ya que $aGa^{-1} \subseteq G = aa^{-1}Ga^{-1}a \subseteq aGa^{-1}$
+	\end{itemize}
+
+	\begin{defin}
+		Dado un grupo $G$, el \textit{centro} de $G$ es el subgrupo normal
+		\begin{gather*}
+			\mathrm{Z}(G) = \{a \in G:ab=ba \; \forall b \in G\}
+		\end{gather*}
+	\end{defin}
+
+	\begin{prdad}
+		\begin{itemize}
+			\item $e \in \mathrm{Z}(G)$, por lo que $\mathrm{Z}(G) \neq \varnothing$
+			\item Dados $a_1,a_2 \in \mathrm{Z}(G)$
+				\begin{gather*}
+					(a_1a_2)b = a_1(a_2b) = a_1(ba_2) = (a_1b)a_2 = \\
+					(ba_1)a_2 = b(a_1a_2) \therefore a_1a_2 \in \mathrm{Z}(G)
+				\end{gather*}
+			\item $\forall g \in G, \; g\mathrm{Z}(G)g^{-1} = \mathrm{Z}(G)$
+			\item Dado $G$ abeliano, $\mathrm{Z}(G) = G$
+			\item Si $N$ es subgrupo normal de $G$, entonces $aN = Na, \; \forall a \in G$
+		\end{itemize}
+	\end{prdad}
+
+	\textit{Ejercicio}
+	
+	Para $n\geq 3$, demuestra
+	\begin{gather*}
+		\begin{cases}
+			\mathrm{Z}(D_n) = \{e\} & n \text{ impar} \\
+			\mathrm{Z}(D_n) = \{e, R^{n/2}\} & n \text{ par} \\
+		\end{cases}
+	\end{gather*}
+
+	\begin{propo}
+		Sean $H,K$ subgrupos de $G$. Equivale decir
+		\begin{enumerate}
+			\item $HK$ es un subgrupo de $G$
+			\item $HK = KH$
+			\item $KH$ es subgrupo de $G$
+		\end{enumerate}
+	\end{propo}
+
+	\dem Veamos que si $HK$ es subgrupo, entonces $HK = KH$. Procedemos por doble contenido. $HK \subseteq KH$? Dados $h, \in H$ y $k \in K$.
+	\begin{gather*}
+		hk \in HK \implies (hk)^{-1} = \underbrace{k^{-1}}_{\in K} \underbrace{h^{-1}}_{\in H} \in KH  
+	\end{gather*}
+	Y el otro contenido se hace de forma paralela. Y as\'{i} $HK \leq G \implies HK = KH$. Las implicaciones entre 2 y 3 son iguales.
+	Vamos con la implicaci\'{o}n entre 2 y 1. Ahora, $HK = KH$, y queremos ver que $HK \leq G$.
+	\begin{gather*}
+		e = e\cdot e \in HK \\
+		hk \cdot hk = hhkk \in HK \\
+		(hk)^{-1} = k^{-1} h^{-1} \in KH = HK
+	\end{gather*}
+	Luego $HK$ es subgrupo de $G$
+
+	\begin{propo}
+		Sea $G$ grupo, $N \normleq G$, y $H \leq G$. Se tiene que $NH = HN$ es un subgrupo que contiene a $N$ y a $H$. Si adem\'{a}s
+		$H$ es tambi\'{e}n normal, entonces $NH$ es normal.
+	\end{propo}
+
+	\dem Dado $h \in H$.
+	\begin{gather*}
+		hNh^{-1} = N \therefore hN = Nh, \; \forall h \in H \\
+		HN \subseteq NH \subseteq HN \therefore HN = NH \therefore HN \leq G
+	\end{gather*}
+	esta cadena de contenidos se da ya que
+	\begin{gather*}
+		h \in H, \; x \in N \\
+		hx \in hN = Nh \therefore \exists y \in N \text{ t.q. } hx = yh \in Nh \subseteq NH
+	\end{gather*}
+	
+	Si adem\'{a}s $H \normleq G$, entonces $\forall g \in G$
+	\begin{gather*}
+		gHNg^{-1} = \underbrace{gHg^{-1}}_{=H} \underbrace{gNg^{-1}}_{=N} = HN
+	\end{gather*}
+	por lo que $HN \normleq G$.
+
+	\begin{teoma}
+		Sea $G$ grupo, $N \normleq G$ y $G/N := \{aN : a \in G\}$. Se tiene que $(aN)(bN) = (ab)N$, por lo que queda definida
+		la operaci\'{o}n
+		\begin{align*}
+			(\cdot): G/N \times G/N & \to G/N \\
+			(aN,bN) & \mapsto (ab)N
+		\end{align*}
+		que dota a $G/N$ de estructura de grupo. El elemento neutro es $eN$ y el inverso es $a^{-1}N$. El grupo $(G/N,\cdot)$ se llama
+		\textit{grupo cociente de G por N}.
+	\end{teoma}
+
+	\dem En efecto, $G/N \neq \varnothing$, ya que $N = eN \in G/N$.
+	\begin{itemize}
+		\item Asociatividad.
+			\begin{gather*}
+				(aN bN) cN = abN cN = (ab)cN = a(bc)N = aN bcN = aN (bN cN)
+			\end{gather*}
+		\item Neutro
+			\begin{gather*}
+				aN\cdot eN = aeN = aN \\
+				eN \cdot aN = eaN = aN
+			\end{gather*}
+		\item Inverso
+			\begin{gather*}
+				aN \cdot a^{-1}N = aa^{-1}N = eN = a^{-1}N \cdot aN
+			\end{gather*}
+	\end{itemize}
+
+	\begin{propo}
+		Sean $H$ un subgrupo de $G$, y $N \normleq G$. Se tiene que:
+		\begin{enumerate}
+			\item $aH = bH \iff a^{-1}b \in H$ \\
+			\item Si $G$ es finito entonces $|G/N| = |G:N| = |G|/|N|$
+		\end{enumerate}
+	\end{propo}
+
+	\dem Veamos la parte 1. Si $aN = bN$ entonces $a = ae \in aN = bN$. Luego tiene que $\exists x \in N \text{ t.q. } a = bx
+	\therefore b^{-1}a = x \in N$. Rec\'{i}procamente, procedemos por doble contenido. Dado $x \in N$
+	\begin{gather*}
+		ax = b \cdot \underbrace{b^{-1} \cdot a}_{\in N} \cdot \overbrace{x}^{\in N} \in bN \therefore aN \subseteq bN \\
+		by = a \cdot \underbrace{a^{-1} \cdot b}_{\in N} \cdot \overbrace{y}^{\in N} \in aN \therefore bN \subseteq aN
+	\end{gather*} \\
+
+	\textit{Nota:} Vimos que si $H \leq G$, entonces
+	\begin{gather*}
+		a \equiv b \iff b = ah \text{ para alg\'{u}n } h \in H
+	\end{gather*}
+	es la relaci\'{o}n de equivalencia. La clase de equivalencia de $a \in G$ es
+	\begin{gather*}
+		[a] = \{ah : h \in H\} = aH
+	\end{gather*}
+	$\therefore$ por las propiedades de las clases de equivalencia
+	\begin{gather*}
+		aH = bH \text{ \'{o} } aH \cap bH = \varnothing \\
+		G = \bigsqcup_{aH \in G/H} aH
+	\end{gather*}
+	donde $G/H := \{aH | a \in G\}$
+
+	\begin{propo}
+		Si $G$ es abeliano, todo subgrupo suyo es normal.
+	\end{propo}
+
+	\dem Sea $H \leq G, \, \forall \; x \in G$
+	\begin{gather*}
+		xHx^{-1} = xx^{-1}H = H
+	\end{gather*}
+	por lo que $H \normleq G$.
+
+	\begin{propo}
+		Sea $G$ grupo, $H \normleq G$, con $|H|=n$, entonces los elementos de $\faktor{G}{H}$ ``colapsan'' de $n$ en $n$. Es decir,
+		$\overline{a_1} = \overline{a_2} = \ldots = \overline{a_n}$ con $a_i$ distintos.
+	\end{propo}
+
+	\dem Sea $a \in G$, entonces $\overline{a} = a\cdot H = \{ah : h \in H\}$. Notemos que como $e \in H$, entonces $a \in aH$.
+	Como $H$ tiene $n$ elementos distintos, $aH$ tambi\'{e}n tendr\'{a} otros $n$ elementos distintos. As\'{i}, para todo $g \in G$, $gH = aH \iff
+	g \in aH$. Por ello, los $n$ elementos que colapsan en $aH$ son los elementos de $aH$.
+	
+	\begin{propo}
+		Si el \'{i}ndice de un subgrupo en un grupo es 2 entonces es un subgrupo normal.
+	\end{propo}
+
+	\dem Tenemos $H \leq G$, $|G:H| = 2$ por lo que solo hay 2 clases laterales. Una de ellas es $eH = H$. Otra ser\'{a}
+	$aH$, donde $e^{-1}a \notin H$, es decir $a \notin H$. Con esto, las \'{u}nicas clases laterales son $eH$ y $aH$. Veamos que
+	$H \normleq G$, es decir, $gHg^{-1} = H \; \forall g \in G$. Como sabemos que $G = eH \sqcup aH$, dado $h \in H$, $ha \notin H$,
+	ya que $a \notin H$. Entonces
+	\begin{gather*}
+		ha \in aH \therefore Ha \subseteq aH
+	\end{gather*}
+	y como $|Ha| = |H| = |aH|$ entonces $aH = Ha$. Dado $g \in G$
+	\begin{itemize}
+		\item Caso 1. $g \in H$. Aqu\'{i} $gHg^{-1} \subseteq H \therefore gHg^{-1} = H$
+		\item Caso 2. $g \in aH$. Aqu\'{i} $g =ah$ para alg\'{u}n $h \in H \therefore$
+			\begin{gather*}
+				gHg^{-1} = a\underbrace{hHh^{-1}}_{\subseteq H}a^{-1} = aHa^{-1} \underset{aH=Ha}{=} H \therefore \\
+				gHg^{-1} = H \; \forall g \in G \therefore H \normleq G
+			\end{gather*}
+	\end{itemize}
+	
+	\textit{Nota:} Podemos usar estas dos notaciones, siendo la primera m\'{a}s expl\'{i}cita, y la segunda m\'{a}s c\'{o}moda
+	\begin{gather*}
+		[a] = aN \\
+		\overline{a} = aN
+	\end{gather*}
+	Y las notaciones nos quedan
+	\begin{gather*}
+		\overline{a} \overline{b} = \overline{ab}, \quad (\overline{a})^{-1} = \overline{a^{-1}} \\
+		[a][b] = [ab], \quad [a]^{-1} = [a^{-1}]
+	\end{gather*}
+
+	\begin{teoma}
+		Sean $G$ un grupo y $N \normleq G$. Dado un subgrupo $H \leq G$ que contiene a $N$, el conjunto
+		\begin{gather*}
+			\overline{H} = H/N = \{hN : h \in H\}
+		\end{gather*}
+		es un subgrupo de $G/N$. De hecho, la aplicaci\'{o}n
+		\begin{align*}
+			\{\text{subgrupos de $G$ que contienen a $N$}\} & \to \{\text{subgrupos de } G/N\} \\
+			H & \mapsto \overline{H}
+		\end{align*}
+		es una biyecci\'{o}n que preserva contenidos y normalidad.
+	\end{teoma}
+	
+	\dem Aqu\'{i} $N \normleq G$. Adem\'{a}s, definimos las aplicaciones:
+	\begin{align*}
+		\varphi: \{H \leq G : N \subseteq H\} & \to \{\Omega \leq G/N\} \\
+		H & \mapsto \overline{H} = H/N = \{hN : h \in H\}
+	\end{align*}
+	\begin{align*}
+		\psi:  \{\Omega \leq G/N\} & \to \{H \leq G : N \subseteq H\}  \\
+		\Omega & \mapsto \{a \in G : aN \in \Omega\}
+	\end{align*}
+
+	Veamos que $\varphi$ y $\psi$ son inversas una de la otra, y que cumplen lo dicho en el teorema.
+	\begin{itemize}
+		\item \underline{$\varphi$ bien definida}. Debemos ver que si $H \leq G$, entonces $\varphi(H) \leq G/N$.
+			$\varphi(H) = \overline{H} \neq \varnothing$. Dados $h_1N,h_2N \in \overline{H}$ con $h_1,h_2 \in H$:
+			\begin{gather*}
+				\begin{rcases}
+					(h_1N)(h_2N) = \overbrace{h_1h_2}^{\in H}N \in \overline{H} \\
+					(h_1N)^{-1} = \underbrace{h_1^{-1}}_{\in H}N \in \overline{H}
+				\end{rcases} \therefore \overline{H} \leq G/N
+			\end{gather*}
+		\item \underline{$\psi$ bien definida}. Dado $\Omega \leq G/N$, debemos ver que $\psi(\Omega)\leq G$. Como $\Omega \leq G/N$,
+			$\Omega$ tiene al neutro $eN \therefore e \in \psi(\Omega) \therefore \psi(\Omega) \neq \varnothing$. Dados
+			$a_1,a_2 \in \psi(\Omega), \; a_1N, a_2N \in \Omega \therefore$
+			\begin{gather*}
+				\begin{rcases}
+					(a_1a_2)N = (a_1N)(a_2N) \in \Omega \therefore a_1,a_2 \in \psi(\Omega) \\
+					a_1^{-1}N = (a_1N)^{-1} \in \Omega \therefore a_1^{-1} \in \psi(\Omega)
+				\end{rcases} \therefore \psi(\Omega) \leq G
+			\end{gather*}
+			Dado $x \in N$, $xN = eN \in \Omega \therefore x \in \psi(\Omega) \therefore N \subseteq \psi(\Omega)$
+		\item \underline{Veamos que $\psi\varphi = \mathrm{Id}$}. Dado $H \leq G$, $N \subseteq H$
+			\begin{gather*}
+				\psi\varphi(H) = \psi\left( \{hN : h \in H\} \right) = \{a \in G : \exists h \in H \text{ t.q. } aN=hN\} = \\
+				= \{a \in G : \exists h \in H \text{ t.q. } h^{-1}a \in N\} = \{a \in G : \exists h \in H \text{ t.q. } a \in hN\} = \\
+				\bigcup_{h \in H} hN \underset{N \subseteq H}{\subseteq} H \subseteq \bigcup_{h \in H} hN \implies \\
+				\implies \bigcup_{h \in H} hN = H \therefore \psi\varphi(H) = H \therefore \psi\varphi = \mathrm{Id}
+			\end{gather*}
+		\item \underline{Veamos que $\varphi\psi = \mathrm{Id}$}. Dado $\Omega \leq G/N$:
+			\begin{gather*}
+				\varphi\psi(\Omega) = \varphi \left( \{a \in G : aN \in \Omega\} \right) = \{aN : aN \in \Omega\} = \Omega \\
+				\therefore \varphi\psi(\Omega) = \Omega \therefore \varphi\psi = \mathrm{Id}
+			\end{gather*}
+	\end{itemize}
+	As\'{i}, hemos visto que $\varphi$ y $\psi$ son inversas, por lo que son biyecciones. Vamos con sus propiedades:
+
+	\begin{itemize}
+		\item \underline{Veamos que $\varphi$ preserva contenidos}. Dados $H_1, H_2 \leq G$ con $H_1 \subseteq H_2$
+			\begin{gather*}
+				\varphi(H_1) = \{h_1N:H_1 \in H_1\} \subseteq \{h_2N:h_2 \in H_2\} = \varphi(H_2)
+			\end{gather*}
+		\item \underline{Veamos que $\psi$ preserva contenidos}. Dados $\Omega_1,\Omega_2 \leq \faktor{G}{N}$, con $\Omega_1 \subseteq \Omega_2$
+			\begin{gather*}
+				\psi(\Omega_1) = \{a \in G:aN \in \Omega_1\} \subseteq \{a \in G : aN \in \Omega_2\} = \psi(\Omega_2)
+			\end{gather*}
+		\item \underline{Veamos que $\varphi$ preserva normalidad}. Dado $M \normleq G$, $N \subseteq M$. Debemos comprobar que $\forall \overline{g} =
+			gN \in \faktor{G}{N}$ se tiene que $\overline{g}\varphi(M)\overline{g}^{-1} = \varphi(M)$. Por doble contenido.
+			Dado $yN$ con $y \in M$
+			\begin{gather*}
+				\overline{g} \; \overline{y} \; \overline{g}^{-1} = \overline{gyg^{-1}} \underbrace{\in}_{gyg^{-1} \in M} \varphi(M) \therefore
+				\overline{g}\varphi(M)\overline{g}^{-1} \subseteq \varphi(M).
+			\end{gather*}
+			Si cambiamos $\overline{g}$ por $\overline{g}^{-1}$ tenemos
+			\begin{gather*}
+				\overline{g}^{-1}\varphi(M)\overline{g} \subseteq \varphi(M) \therefore \varphi(M) \subseteq \overline{g}\varphi(M)\overline{g}^{-1}
+				\therefore\overline{g} \varphi(M) \overline{g}^{-1} = \varphi(M) \therefore \\ \varphi(M) \normleq \faktor{G}{N}
+			\end{gather*}
+			
+		\item \underline{Veamos que $\psi$ preserva normalidad}. Dado $\Omega \normleq \faktor{G}{N}$. Debemos comprobar que $\forall g \in G$
+			se tiene que $g\psi(\Omega)g^{-1} = \psi(\Omega)$. Por doble contenido.	Dado $a \in \psi(\Omega)$
+			\begin{gather*}
+				gag^{-1}N = \overline{gag^{-1}} = \overline{g} \; \overline{a} \; \overline{g}^{-1} \underbrace{\in}_{aN \in \Omega} \Omega
+				\implies gag^{-1} \in \psi(\Omega) \therefore g\psi(\Omega)g^{-1} \subseteq \psi(\Omega).
+			\end{gather*}
+			Si cambiamos $g$ por $g^{-1}$ tenemos
+			\begin{gather*}
+				g^{-1}\psi(\Omega)g \subseteq \psi(\Omega) \therefore \psi(\Omega) \subseteq g\psi(\Omega)g^{-1} \therefore
+				g\psi(\Omega)g^{-1} = \psi(\Omega) \therefore \\ \psi(\Omega) \normleq \faktor{G}{N}
+			\end{gather*}
+	\end{itemize}
+
+	\begin{defin}
+		Un grupo no trivial es \textit{simple} si no posee subgrupos normales propios no triviales.
+	\end{defin}
+
+	\begin{teoma}
+		\begin{itemize}
+			\item $A_2$ es el grupo trivial
+			\item $A_3$ es grupo abeliano simple
+			\item $A_4$ no es ni abeliano ni simple
+			\item $A_n$ es un grupo simple no abeliano para $n \geq 5$
+		\end{itemize}
+	\end{teoma}
+
+	En el caso de $A_4$, vemos que
+	\begin{gather*}
+		N := \{I,(12)(34),(13)(24),(14)(23)\}
+	\end{gather*}
+	es subgrupo de $A_4$
+	\begin{gather*}
+		(ij)(kl) \cdot (ab)(cd) \underset{SPDG, a=i}{=} (ij)(kl)(ib)(cd) \underset{SPDG}{=}
+		\begin{cases}
+			\mathrm{Id} \in N & ,b=j \\
+			(ij)(kl)(ik)(jl) = (il)(kj) \in N & ,b \neq j
+		\end{cases}
+	\end{gather*}
+	$\therefore N$ es subgrupo de $A_4$. Adem\'{a}s $\forall \sigma \in A_4$
+	\begin{gather*}
+		\sigma(ij)(kl)\sigma^{-1} = (\sigma(i)\sigma(j))(\sigma(k)\sigma(l)) \in N
+	\end{gather*}
+	$\therefore N$ es subgrupo normal de $A_4 \therefore A_4$ no es simple. \\
+
+	Para el caso de $A_3$, tenemos que $A_3 \cong C_3$, que es simple y abeliano, y $A_2 = \{\mathrm{Id}\}$. \\
+
+	Ahora, para $A_n$ con $n \geq 5$. Tenemos que $N \normleq A_n$ no trivial. Al no ser trivial, $\exists \alpha \in N$, y cogiendo cualquier
+	3-ciclo de $A_n$, resulta que
+	\begin{gather*}
+		\alpha(a \; b \; c)^{-1} \alpha^{-1} (a \; b \; c) = (\alpha(c) \; \alpha(b) \; \alpha(a))(a \; b \; c) \quad (*)
+	\end{gather*}
+	es elemento de $N$, por su normalidad. Para evitar que $N = A_n$, y por lo tanto, llegar a una contradicci\'{o}n, tenemos que evitar tener ciertos
+	elementos en $N$, ya que su pertenencia hacen que $N$ sea el grupo ambiente. Estos son:
+	\begin{enumerate}
+		\item Los 3-ciclos. En efecto, si tenemos que $(x \; y \; z) \in N$, entonces $(x \; y \; z)^2 = (x \; z \; y) \in N$, y podemos cambiar cualquier
+			elemento del ciclo, por ejemplo $x$, por $a \notin \{x,y,z\}$, y seguir\'{a} estando en $N$. Esto se debe a que
+			\begin{gather*}
+				\underbrace{(x \; y \; a)}_{\in A_n} \underbrace{(x \; y \; z)}_{\in N} \underbrace{(x \; y \; z)^{-1}}_{\in A_n} 
+				\underset{(*)}{=} (y \; a \; z) \in N
+			\end{gather*}
+			y al elevar al cuadrado, tenemos que $(a \; y \; z) \in N$. Este proceso se puede repetir para obtener todos los 3-ciclos, y por
+			ende, $N = A_n$.
+		\item El producto de 2 trasposiciones distintas, entonces contiene alg\'{u}n 3-ciclo. Para trasposiciones no disjuntas $(a \; b)$ y $(b \; c)$
+			, su producto es $(a \; b)(b \; c) = (a \; b \; c)$. En el caso de que sean disjuntas, $\alpha := (a \;b)(c \; d) \in N$,
+			observamos que
+			\begin{gather*}
+				\alpha (a \; x)(c \; d)\alpha^{-1}(a \; x)(c \; d) \underset{(*)}{=}  (a \; b \; x)
+			\end{gather*}
+			por normalidad de $N$.
+		\item Si $N$ tiene alg\'{u}n 5-ciclo, entonces tiene alg\'{u}n 3-ciclo. Si $\alpha := (a_1 \; a_2 \; a_3 \; a_4 \; a_5) \in N$, podemos aplicar (*)
+			al 3-ciclo $(a_1 \; a_2 \; a_3)$, para obtener que $(a_1 \; a_4 \; a_3) \in N$
+	\end{enumerate}
+
+	Ahora bien, tenemos nuestro $N \normleq A_n$, demostremos gracias a esta preparaci\'{o}n que no existe m\'{a}s all\'{a} de subgrupos triviales. Sea
+	$\alpha \in N$. Si $\alpha$ fija a todos los elementos que no sean $\{\alpha^{-1}(x),x,\alpha(x),\alpha^2(x)\}$, entonces disponemos
+	de 4 elementos para formar su descomposici\'{o}n en ciclos disjuntos. Esto hace que sea, o un 3-ciclo, o un producto de trasposiciones distintas,
+	lo cual hace que $N$ sea trivial, lo que es absurdo. Ahora, $\alpha$ no fija a un $z \notin \{\alpha^{-1}(x),x,\alpha(x),\alpha^2(x)\}$. Al aplicar
+	(*) al ciclo $(x \; \alpha(x) \; z)$ obtenemos $\beta := (\alpha(z) \; \alpha^2(x) \; \alpha(x))(x \; \alpha(x) \; z) \in N$. Si $\alpha^2(x) = x$,
+	entonces $\beta = (x \; \alpha(z))(z \; \alpha(x))$, y hemos vuelto a acabar, o que $\alpha^2(x) \neq x$, que entonces $\beta = (x \; \alpha(z)
+	\; \alpha^2(x) \; \alpha(x) \; z)$, que es un 5-ciclo, y hemos acabado. \\
+
+	As\'{i}, hemos visto que suponer que existe $N \normleq A_n$ no trivial es absurdo. \\
+
+	\textit{Ejemplos:} \\
+
+	\underline{Grupo cociente de un grupo c\'{i}clico $C_n$}, donde $C_n = \gen{a}, |a| = n$. Como $C_n$ es abeliano, entonces todo subgrupo suyo es normal,
+	ya que
+	\begin{gather*}
+		\sigma H \sigma^{-1} = \sigma \sigma^{-1} H = H
+	\end{gather*}
+	Que pasa para todos los abelianos. Si $d$ es divisor de $n$, sabemos que $N := \gen{a^{d}}$ tiene orden $\frac{n}{d}$. El cociente
+	tendr\'{a} orden $|G/N| = \frac{|G|}{|N|} = \frac{n}{n/d} = d$. Adem\'{a}s,
+	\begin{gather*}
+		G/N = \{a^{i}N : i=0,\ldots,n-1\} \underset{\overline{a} := aN}{=} \{\overline{a}^{i} : i=0,\ldots,n-1\} = \gen{\overline{a}}
+	\end{gather*}
+	$\therefore G/N$ es c\'{i}clico $\therefore G/N \cong C_d$. Lo que pasa, es que al tomar las potencias $i=0,\ldots,n-1$, estamos
+	repitiendo mucho, cuando solo hace falta tomar $i=0,\ldots,d-1$, ya que si vamos haciendo potencias
+	\begin{gather*}
+		\overline{e},\overline{a},\overline{a}^2,\ldots,\overline{a}^{d} = a^{d}N \underset{a^{d} \in N}{=} eN = \overline{e}
+	\end{gather*}
+	Por ello, escribimos
+	\begin{gather*}
+		G/N = \{\overline{a}^{i} : i =0,\ldots,d-1\}
+	\end{gather*} \\
+
+	Grupo cociente de un di\'{e}drico. Sea $N \normleq D_n, \; N \neq \{\mathrm{Id}\}$.
+	\begin{itemize}
+		\item Caso 1. $\exists H$ reflexi\'{o}n, $H \in N$.
+			\begin{gather*}
+				R^2H = RHR^{-1} \in N \text{, por ser } N \normleq D_n \\
+				\therefore R^2 = \underbrace{(R^2H)}_{\in N} \underbrace{H}_{\in N} \in N \\
+				\therefore R^{2i}, HR^{2i} \in N \; \forall i
+			\end{gather*}
+			Si $n$ es impar, entonces $|R^2| = n$ hace que $N$ contenga $R^{i} \; \forall i \therefore$ tambi\'{e}n $HR^{i} \therefore N = D_n$ y
+			$|D_n/N| = 1 \therefore D_n/N = \{\mathrm{Id}\}$.
+
+			Si $N$ contiene alg\'{u}n elemento m\'{a}s que $R^{2i},HR^{2i} \; \forall i$ entonces tiene rotaciones impares, por lo
+			que tendr\'{i}a todas las rotaciones, y $N = D_n$, y $D_n/N = \{\mathrm{Id}\}$.
+
+			Si $N = \gen{R^2,H}$ y $n$ es par, entonces $|N| = 2 \cdot \frac{n}{2} = n$, y $|D_n/N| = 2$, por lo que
+			$D_n/N \cong C_2$
+
+			$\gen{R^2,H}$ s\'{i} es un subgrupo normal
+			\begin{gather*}
+				R^{i} R^{2k} R^{-i} = R^{2k} \in N \\
+				(HR^{i}) R^{2k} (HR^{i})^{-1} = R^{-2k} \in N \\
+				R^{i} HR^{2k} R^{-i} \in N \\
+				(HR^{i}) HR^{2k} (HR^{i})^{-1} \in N
+			\end{gather*}
+		\item Caso 2. $N$ no contiene ninguna reflexi\'{o}n. $N \subseteq \gen{R} \therefore N = \gen{R^{d}}$ para alg\'{u}n $d$
+			divisor de $n$. Notar que, en efecto, todo subgrupo del grupo de rotaciones es normal en $D_n$, ya que
+			si $S = \gen{R^{d}}$ entonces (usamos $S$ como subgrupo ya que $H$ se usa en reflexiones)
+			\begin{gather*}
+				R^{i} R^{dk} R^{-i} = R^{dk} \in S \\
+				(HR^{i}) R^{dk} (HR^{i})^{-1} = R^{-dk} \in S \\
+				\therefore \forall g \in D_n, gSg^{-1} \subseteq S \land g^{-1}Sg \subseteq S \therefore S \subseteq gSg^{-1} \\
+				\therefore gSg^{-1} = S
+			\end{gather*}
+			Para $N = \gen{R^{d}}$, $|D_n/N| = \frac{|D_n|}{|N|} = \frac{2n}{n/d} = 2d$.
+			\begin{gather*}
+			D_n/N = \{R^{i}N, HR^{i}N : i=0,\ldots,n-1\} = \{\overline{R}^{i}, \overline{H} \; \overline{R}^{i} : i=0,\ldots,n-1\}
+			\end{gather*}
+			Por lo que hay repeticiones, al haber m\'{a}s de $2d$ elementos. Observamos que
+			\begin{gather*}
+				\overline{e},\overline{R},\overline{R}^2,\ldots,\overline{R}^{d} \underset{R^{d} \in N}{=} \overline{e} \\
+			\therefore D_n/N = \{\overline{R}^{i}, \overline{H} \; \overline{R}^{i} : i=0,\ldots,d-1\}
+			\end{gather*}
+			Como en esta descripci\'{o}n no hay repeticiones entre los elementos:
+			\begin{gather*}
+				\overline{R}^{d} = \overline{e} \\
+				\overline{H}^2 = \overline{H^2} = \overline{e} \\
+				\overline{H} \; \overline{R} \; \overline{H}^{-1} = \overline{HRH^{-1}} = \overline{R^{-1}} = \overline{R}^{-1} \\
+				\therefore D_n/N \cong D_d
+			\end{gather*}
+	\end{itemize}
+	
+	\begin{prdad}
+		Producto cartesiano de grupos es grupo. Si $G_1$ y $G_2$ son grupos, entonces $G_1 \times G_2$ es grupo con la operaci\'{o}n
+		\begin{gather*}
+			(a_1,a_2) \cdot (b_1,b_2) := (a_1b_1,a_2b_2)
+		\end{gather*}
+		Si adem\'{a}s los dos son abelianos, el producto as\'{i} lo ser\'{a}. Tambi\'{e}n se puede escribir como $G_1 \bigoplus G_2$.
+	\end{prdad}
+
+	\subsection{Homomorfismos de grupo.}
+
+	\begin{defin}
+		Recordamos que, dados $(G_1,\cdot),(G_2,\ast)$, un homomorfismo es una aplicaci\'{o}n $f:G_1 \to G_2$ tal que $f(a\cdot b) = f(a) \ast f(b)$.
+		Si es inyectivo, es \textit{monomorfismo}. Si es suprayectivo, es \textit{epimorfismo}. Si son biyectivos, son \textit{isomorfismos}.
+	\end{defin}
+
+	\begin{prdad}
+		Sea $f:G_1 \to G_2$ homomorfismo de grupos, $a \in G_1$ y $n \in \mathbb{Z}$.
+		\begin{enumerate}
+			\item $f(e) = e$
+			\item $f(a^{-1}) = f(a)^{-1}$
+			\item $f(a^{n}) = f(a)^{n}$
+			\item Si el orden de $a$ es finito entonces el orden de $f(a)$ divide al orden de $a$.
+				En caso de que $f$ sea isomorfismo, los \'{o}rdenes de $a$ y $f(a)$ coinciden.
+		\end{enumerate}
+	\end{prdad}
+
+	\dem Veamos 1)
+	\begin{gather*}
+		f(e) = f(ee) = f(e)\ast f(e) \underset{\text{por } (f(e))^{-1} \in G_2}{\implies} e = f(e)
+	\end{gather*}
+
+	Veamos 2)
+	\begin{gather*}
+		aa^{-1} = e \implies f(aa^{-1}) = f(e) = e \implies f(a) \ast f(a^{-1}) = e \implies f(a^{-1}) = (f(a))^{-1}
+	\end{gather*}
+
+	Veamos 3)
+	\begin{gather*}
+		f(a^{n}) = f(a^{n-1}a) = f(a^{n-1}) \ast f(a) = \ldots = f(a)^{n}
+	\end{gather*}
+
+	Veamos 4)
+	Si $|a| < \infty$, digamos $n := |a|$.
+	\begin{gather*}
+		a^{n} = e \implies f(a^{n}) = f(e) = e \implies f(a)^{n} = e \implies |f(a)| < \infty
+	\end{gather*}
+	y $|f(a)|$ divide a $n \therefore |f(a)|$ divide a $|a|$. Si adem\'{a}s $f$ es isomorfismo, entonces para $m := |f(a)|$
+	\begin{gather*}
+		f(a)^{m} = e \implies f(a^{m}) = f(e) = e \implies a^{m} = e
+	\end{gather*}
+	$\therefore$ $m$ divide a $|a| = n$, y $n$ divide a $m$, por lo que son iguales.
+
+	\begin{propo}
+		Sean $f_1,f_2$ homomorfismos entre dos grupos $G_1,G_2$. Si $f_1$ y $f_2$ coinciden en un conjunto generador de $G_1$ entonces los
+		homomorfismos son iguales.
+	\end{propo}
+
+	\dem Sean $f_1,f_2:G_1 \to G_2$ homomorfismos de grupos. Sea $X$ un conjunto generador de $G_1$. Por hip\'{o}tesis $\forall a \in X$ se tiene
+	que $f_1(a) = f_2(a)$. Como $X$ genera $G_1$ entonces
+	\begin{gather*}
+		G_1 = \left\{ a_1 \cdots a_r : r \geq 0, \; a_i \in X \lor a_i^{-1} \in X \right\}
+	\end{gather*}
+	Dado $g \in G_1$, $g = a_1,\cdots,a_r$ para un cierto $r \geq 0$ y $a_1,\ldots,a_r \in X \cup X^{-1}$. $|f(a)|$ divide a $n \therefore |f(a)|$ divide
+	a $|a|$.
+	\begin{gather*}
+		f_1(g) = f_1(a_1 \cdots a_r) = f_1(a_1) \cdots f_1(a_r) = f_2(a_1) \cdots f_2(a_r) = f_2(a_1 \cdots a_r) = f_2(g)
+	\end{gather*}
+	as\'{i}, $f_1 = f_2$ \\
+	
+	\textit{Ejemplo: } Sea $G$ un grupo y $a \in G, |a| = n$. La aplicaci\'{o}n
+	\begin{align*}
+		f: (\mathbb{Z}_n,+) & \to G \\
+		\overline{k} & \mapsto a^{k}
+	\end{align*}
+
+	es monomorfismo de grupos. Veamos que
+	\begin{itemize}
+		\item $f$ est\'{a} bien definida. Si $\overline{k_1} = \overline{k_2}$ entonces $k_2 = k_1 + cn$ para alg\'{u}n $c \in \mathbb{Z}$
+			\begin{gather*}
+				a^{k_2} = a^{k_1 + cn} = a^{k_1} \cdot (a^{n})^{c} = a^{k_1} e^{c} = a^{k_1}
+			\end{gather*}
+			$\therefore f(\overline{k_2}) = f(\overline{k_1})$, y est\'{a} bien definida.
+		\item $f$ es homomorfismo. Dados $\overline{k_1}, \overline{k_2} \in \mathbb{Z}_n$
+			\begin{gather*}
+				f(\overline{k_1} + \overline{k_2}) = f(\overline{k_1 + k_2}) = a^{k_1 + k_2} = a^{k_1} \cdot a^{k_2} =
+				f(\overline{k_1})f(\overline{k_2})
+			\end{gather*}
+		\item $f$ es inyectiva. Si $f(\overline{k_1}) = f(\overline{k_2})$ entonces $a^{k_1} = a^{k_2} \therefore a^{k_2 - k_1} = e$.
+			$n = |a|$ divide a $k_2-k_1 \therefore k_2 \equiv k_1 \; (\mathrm{mod} \; n) \therefore \overline{k_2} = \overline{k_1}$
+	\end{itemize}
+
+	\textit{Ejemplo:} Dados un grupo $G$ y un subgrupo normal $N \normleq G$, tenemos
+	\begin{align*}
+		\pi: G & \to G/N \\
+		a & \mapsto aN = \overline{a}
+	\end{align*}
+	que es epimorfismo de grupos.
+	\begin{gather*}
+		\forall a,b \in G \\
+		\pi(ab) = \overline{ab} = \overline{a}\; \overline{b} = \pi(a) \pi(b)
+	\end{gather*}
+	$\therefore \pi$ es homomorfismo, y claramente suprayectiva. Notar que siempre que $a \in N$ tenemos
+	\begin{gather*}
+		\pi(a) = \overline{a} = aN = eN
+	\end{gather*}
+	por lo que todos los elementos de $N$ tienen la misma imagen, que es $\overline{e}$. \\
+
+	\begin{propo}
+		Sea $G$ un grupo que posee dos \textit{subgrupos normales}, $N_1,N_2 \normleq G$ tales que
+		\begin{enumerate}
+			\item $N_1 \cap N_2 = \{e\}$
+			\item $|G| = |N_1| \cdot |N_2|$
+		\end{enumerate}
+		En tal caso, $G$ es isomorfo a $N_1 \times N_2$. Consideramos
+		\begin{align*}
+			f: N_1 \times N_2 & \to G \\
+			(g_1,g_2) & \mapsto g_1g_2
+		\end{align*}
+	\end{propo}
+
+	\dem Veamos que es isomorfismo. Primero necesitamos ver que los elementos de $N_1$ conmutan con los de $N_2$. Dados
+	$a_1 \in N_1, a_2 \in N_2\;$
+	\begin{gather*}
+		\underbrace{a_1 \underbrace{a_2 a_1^{-1} a_2^{-1}}_{\in N_1}}_{\in N_1}
+	\end{gather*}
+	Pero organizando de otra forma
+	\begin{gather*}
+		\underbrace{\underbrace{a_1 a_2 a_1^{-1}}_{\in N_2} a_2 ^{-1}}_{\in N_2}
+	\end{gather*}
+	Por lo que $a_1 a_2 a_1^{-1} a_2^{-1} = e \therefore a_1a_2 = a_2a_1$. Veamos que $f$ es homomorfismo
+	\begin{gather*}
+		f \left( (a_1,a_2)(b_1,b_2) \right) = f \left( (a_1b_1,a_2b_2) \right) = a_1b_1a_2b_2 = \\
+		= a_1a_2 b_1b_2 = f \left( (a_1,a_2) \right) f \left( (b_1,b_2) \right) 
+	\end{gather*}
+	Veamos que es inyectiva.
+	\begin{gather*}
+		f((a_1,a_2)) = f((b_1,b_2)) \implies a_1a_2 = b_1b_2 \implies b_1^{-1}a_1 = b_2a_2^{-1} \in N_1 \cap N_2 = \{e\} \implies \\
+		\implies b_1^{-1}a_1 = e b_2a_2^{-1} = e \implies \begin{cases}
+			a_1=b_1 \\
+			a_2 = b_2
+		\end{cases}
+	\end{gather*}
+	Por lo que es inyectiva. Veamos la suprayectividad
+	\begin{gather*}
+		|N_1 \times N_2| = |N_1||N_2| = |G|
+	\end{gather*}
+	Por lo que es suprayectiva, por ser inyectiva. \\
+
+	\textit{Ejercicio: } Descomponer as\'{i} a $D_{2m} \cong D_m \times C_2$, con $m$ impar. \\
+
+	En este caso, podemos hacer la descomposici\'{o}n:
+	\begin{gather*}
+		D_{2m} = N_1 \times N_2 \\
+		\begin{cases}
+			N_1 = \{R^{2},R^{4},\ldots,R^{2m}=e,HR^{2},HR^{4},\ldots,HR^{2m}=H\} \cong D_m \\
+			N_2 = \{e,R^{m}\} \cong C_2
+		\end{cases}
+	\end{gather*}
+	En este caso, si demostramos que esos dos subgrupos son normales, ya hemos visto que la descomposici\'{o}n de $D_{2m}$ es cierta, ya que cumplen que
+	la intersecci\'{o}n es $\{e\}$, y que $|D_{2m}| = |N_1| \cdot |N_2|$, ya que $4m = 2m \cdot 2$. Veamos que $N_1$ es normal:
+	\begin{gather*}
+		R^{i} \cdot R^{2k} \cdot R^{-i} = R^{2k} \in N_1 \\
+		R^{i} \cdot HR^{2k} \cdot R^{-i} = R^{i} \cdot HR^{2k-i} = R^{i} \cdot R^{i-2k}\cdot H = R^{2(i-k)} \cdot H = HR^{2(k-i)} \in N_1 \\
+		HR^{i} \cdot R^{2k} \cdot (HR^{i})^{-1} = HR^{i} R^{2k} R^{-i} H = H R^{2k} H = R^{-2k} \in N_1 \\
+		HR^{i} \cdot HR^{2k} \cdot (HR^{i})^{-1} = R^{2k-i} \cdot R^{-i} \cdot H = R^{2(k-i)} \cdot H = HR^{2(i-k)} \in N_1
+	\end{gather*}
+	Por lo que $N_1 \normleq D_{2m}$. Ahora, vemos con $N_2$
+	\begin{gather*}
+		R^{i} \cdot e \cdot R^{-i} = e \in N_2 \\
+		R^{i} \cdot R^{m} \cdot R^{-i} = R^{m} \in N_2 \\
+		HR^{i} \cdot e \cdot (HR^{i})^{-1} = e \in N_2 \\
+		HR^{i} \cdot R^{m} \cdot (HR^{i})^{-1} = H \cdot R^{i + m - i} \cdot H = R^{-m} = R^{m} \in N_2 \\
+	\end{gather*}
+	Luego, hemos encontrado una descomposici\'{o}n del tipo $D_{2m} \cong D_m \times C_2$
+
+	\textit{Ejemplo:} Otro ejemplo puede ser descomponer $C_n \cong C_{n_1} \times C_{n_2}$, con $n = n_1 \cdot n_2, \; \mathrm{mcd}(n_1,n_2) = 1$.
+	Como $n_1$ y $n_2$ dividen a $n$, existen subgrupos $N_1, N_2 \normleq C_n$ con $|N_1| = n_1, \; |N_2| = n_2$.
+	Adem\'{a}s $N_1 \cap N_2 = \{e\}$, ya es subgrupo de $N_1$ y de $N_2$, y que su orden divide a $n_1$ y a $n_2$, por lo que tiene orden 1.
+
+	\begin{propo}
+		Un homomorfismo de grupos es inyectivo si y solo si su n\'{u}cleo es el subgrupo trivial.
+	\end{propo}
+
+	\dem Tomamos $f:G_1 \to G_2$ homomorfismo de grupos. Si $f$ es inyectivo, $\forall g \in \ker f, \; f(g) = e = f(e) \therefore
+	g = e \therefore \ker f = \{e\}$. Si $\ker f = \{e\}$, entonces $\forall g_1,g_2 \in G$ con $f(g_1) = f(g_2)$
+	\begin{gather*}
+		f(g_1) \left( f(g_2) \right)^{-1} = e \therefore f(g_1)f(g_2^{-1}) = e \therefore f(g_1g_2^{-1}) = e \therefore \\
+		g_1g_2^{-1} \in \ker f \therefore g_1g_2^{-1} = e \therefore g_1 = g_2
+	\end{gather*}
+	Luego, es inyectiva
+
+	\begin{teoma}
+		\textit{Primer teorema de isomorf\'{i}a:} Sea $f:G_1 \to G_2$ homomorfismo de grupos. Se tiene que $\ker f$ es un
+		subgrupo normal de $G_1$ e $\im f$ es un subgrupo de $G_2$. Adem\'{a}s, la aplicaci\'{o}n
+		\begin{align*}
+			\overline{f}: G_1/\ker f & \to \im f \\
+			a \ker f & \mapsto f(a)
+		\end{align*}
+		est\'{a} bien definida y es un isomorfismo de grupos.
+	\end{teoma}
+	
+	\dem Veamos que $\ker f \normleq G_1$.
+	\begin{gather*}
+		f(e) = e \implies e \in \ker f \therefore \ker f \neq \varnothing \\
+		g_1,g_2 \in \ker f \implies f(g_1g_2) = f(g_1) f(g_2) = e \cdot e = e \implies g_1g_2 \in \ker f \\
+		g \in \ker f \implies f(g^{-1}) = f(g_1)^{-1} = e^{-1} = e \implies g^{-1} \in \ker f
+	\end{gather*}
+	Luego $\ker f \leq G_1$. Dado $a \in G$ y $g \in \ker f$
+	\begin{gather*}
+		f(aga^{-1}) = f(a) \underbrace{f(g)}_{e} f(a)^{-1} = e \therefore aga^{-1} \in \ker f \therefore a \cdot \ker f \cdot a^{-1} \subseteq \ker f
+	\end{gather*}
+	Luego $\ker f$ es normal, y podemos considerar el grupo cociente $G_1 / \ker f$. Veamos que $\im f \leq G_2$
+	\begin{gather*}
+		f(e) = e \implies e \in im f \therefore \im f \neq \varnothing \\
+		g_1,g_2 \in \im f, \; \exists a_1,a_2 \in G_1 \text{ t.q. } g_1 = f(a_1),g_2 = f(a_2) \therefore g_1g_2 = f(a_1a_2) \in \im f \\
+		g \in \im f, \; \exists a \in G_1 \text{ t.q. } g = f(a) \therefore g^{-1} = f(a^{-1}) \in \im f
+	\end{gather*}
+	Luego $\im f \leq G_2$. Veamos que est\'{a} bien definida la aplicaci\'{o}n
+	\begin{align*}
+		\overline{f}: G_1/\ker f & \to \im f \\
+		a \ker f & \mapsto f(a)
+	\end{align*}
+	Si $a \ker f = b \ker f$ entonces $b^{-1}a \in \ker f \therefore$
+	\begin{gather*}
+		f(b^{-1}a) = e \therefore f(b)^{-1}f(a) = e \therefore f(a) = f(b)
+	\end{gather*}
+	Ahora, veamos que $\overline{f}$ es homomorfismo
+	\begin{gather*}
+		\overline{f}(\overline{a} \overline{b}) = \overline{f}(\overline{ab}) = f(ab) = f(a) f(b) = \overline{f}(\overline{a}) \overline{f}(\overline{b})
+	\end{gather*}
+	Veamos que $\overline{f}$ es inyectiva
+	\begin{align*}
+		\ker \overline{f} &= \{\overline{a} \in G / \ker f : \overline{f}(\overline{a}) = e\} = \\
+				  &= \{\overline{a} \in G/ \ker f : f(a) = e\} = \\
+				  &= \{\overline{a} \in G/ \ker f : a \in \ker f\} = \\
+				  &= \{\overline{e}\}
+	\end{align*}
+	Por lo que es $\overline{f}$ es inyectiva. Obviamente es suprayectiva. Luego, $\overline{f}$ es isomorfismo y tenemos que
+	\begin{gather*}
+		\im f \cong G / \ker f
+	\end{gather*}
+
+	\begin{teoma}
+		\textit{Segundo teorema de isomorf\'{i}a:} Sea $G$ un grupo, $N \normleq G$, y $H \leq G$.
+		Entonces, $NH \leq G$, $N \normleq NH$, $N \cap H \normleq H$ y
+		\begin{align*}
+			f: H/(N \cap H) & \to NH/N \\
+			h N \cap H & \mapsto hN
+		\end{align*}
+		es isomorfismo.
+	\end{teoma}
+
+	\dem Ya hemos visto que $NH \leq G$. $N \leq NH$, ya que $\forall x \in N$, $x = xe \in NH \therefore N \subseteq NH$ y como $N \leq G$, $N \leq NH$.
+	Adem\'{a}s, $\forall g \in NH$
+	\begin{gather*}
+		gNg^{-1} = N \text{ por ser } N \normleq G
+	\end{gather*}
+	$\therefore N \normleq NH$. Veamos que $N \cap H \normleq H$. $N \cap H \leq H$. Para todo $h \in H$ y $x \in N \cap H$.
+	\begin{gather*}
+		h\underbrace{x}_{\in N, \in H}h^{-1} \underbrace{\in}_{N \normleq G, x \in H} N \cap H
+	\end{gather*}
+	$\therefore N \cap H \normleq H$.
+	
+	Ahora, consideramos
+	\begin{align*}
+		f: H & \to NH/N \\
+		h & \mapsto hN = \overline{h}
+	\end{align*}
+	que es homomorfismo de grupos.
+	\begin{gather*}
+		f(h_1h_2) = \overline{h_1h_2} = \overline{h_1}\cdot\overline{h_2}=f(h_1)f(h_2)
+	\end{gather*}
+	De hecho, es suprayectiva, ya que dado $x \in N, h \in H$
+	\begin{gather*}
+		xhN = h\underbrace{h^{-1}xh}_{\in N}N = \overline{h} \cdot \overline{h^{-1}xh} = \overline{h} \cdot \overline{e} = \overline{h} = hN \\
+		\therefore xhN = hN = f(h) \therefore f(H) = NH/H
+	\end{gather*}
+	Ahora, analicemos el n\'{u}cleo
+	\begin{align*}
+		\ker f &= \{h \in H : f(h) = \overline{e}\} = \\
+		       &= \{h \in H : hN = eN\} = \\
+		       &= \{h \in H : h \in N\} = H \cap N
+	\end{align*}
+	Por el primer teorema de isomorf\'{i}a, queda inducida:
+	\begin{align*}
+		\overline{f}: H/(N \cap H) & \to NH/H \\
+		hN\cap H & \mapsto hN
+	\end{align*}
+
+	\begin{teoma}
+		\textit{Tercer teorema de isomorf\'{i}a:} Sean $N,M \normleq G$, con $N \subseteq M$, entonces $N/M$ es un subgrupo
+		normal de $G/N$ y la aplicaci\'{o}n
+		\begin{align*}
+			\overline{f}: \faktor{G}{M} & \to \faktor{\faktor{G}{N}}{\faktor{M}{N}} \\
+			gM & \mapsto [\overline{g}] := (gN)\cdot \faktor{M}{N}
+		\end{align*}
+		es una isomorf\'{i}a de grupos.
+	\end{teoma}
+
+	\dem En el estudio de los subgrupos normales del cociente $G/N$, vimos que $M/N$ es un subgrupo normal de $G/N$, que se corresponde
+	con el subgrupo $M$ de $G$ (observar que $N \subseteq M$). Ahora, definimos
+	\begin{align*}
+		f: G & \to (G/N)/(M/N) \\
+		g & \mapsto [\overline{g}] := (gN) M/N
+	\end{align*}
+	Primero, $f$ es homomorfismo de grupos.
+	\begin{gather*}
+		f(g_1g_2) = [\overline{g_1g_2}] = [\overline{g_1} \; \overline{g_2}] = [\overline{g_1}] [\overline{g_2}] = f(g_1)f(g_2)
+	\end{gather*}
+	Obviamente, $f$ es suprayectiva. Veamos el n\'{u}cleo
+	\begin{align*}
+		\ker f &= \{g \in G : f(g) = [\overline{e}]\} = \\
+		       &= \{g \in G : [\overline{g}] = [\overline{e}]\} = \\
+		       &= \{g \in G : \overline{g} = M/N\} = \\
+		       &= \{g \in G : \exists x \in M \text{ t.q. } \overline{g} = \overline{x}\} = \\
+		       &= \{g \in G : \exists x \in M \text{ t.q. } x^{-1}g \in N\} = \\
+		       &= \{g \in G : g \in MN\} = MN \subseteq M (\land M \subseteq MN) \\
+		       \therefore \ker f = M
+	\end{align*}
+	Por el primer teorema de isomorf\'{i}a
+	\begin{align*}
+		\overline{f}: G/M & \to (G/N)/(M/N) \\
+		gM & \mapsto [\overline{g}] = (gN) M/N
+	\end{align*}
+	es una isomorf\'{i}a.
+	
+	\begin{teoma}
+		Sea $M$ un grupo abeliano finitamente generado
+		\begin{enumerate}
+			\item Existen \'{u}nicos enteros $d_1,\ldots,d_r \geq 2$, factores invariantes, y un \'{u}nico $s \geq 0$ tales que
+				$d_i$ divide a $d_{i+1}$ y
+				$$
+				M \cong \mathbb{Z}_{d_1} \times \ldots \times \mathbb{Z}_{d_r} \times \underbrace{\mathbb{Z} \times \ldots \times \mathbb{Z}}_{s}
+				$$
+			\item Existe una lista de enteros positivos $p_1^{e_1},\ldots,p_k^{e_k}$, divisores elementales, que es \'{u}nica salvo
+				reordenaci\'{o}n, y un \'{u}nico $s \geq 0$ tales que $p_1,\ldots,p_k$ son primos, no necesariamente distintos, $e_1,
+				\ldots,e_k$ son enteros positivos y
+				$$
+				M \cong \mathbb{Z}_{p_1^{e_1}} \times \ldots \times \mathbb{Z}_{p_k^{e_k}} \times
+				\underbrace{\mathbb{Z} \times \ldots \times \mathbb{Z}}_{s}
+				$$
+		\end{enumerate}
+	\end{teoma}
+
+	\dem Si podemos hacer la descomposici\'{o}n de 2), pasar a 1) es f\'{a}cil. Si llamamos $S_1$ al conjunto de los $p_i^{e_i}$, entonces tendremos
+	que $d_1 = \mathrm{mcm}(S_1)$, y definimos $S_2 = S_1 \setminus \{\text{divisores de } S_1\}$. De esta forma, podemos repetir el proceso con $d_2$,
+	$d_3$, y as\'{i} hasta llegar a $S_{r+1} = \varnothing$, en este paso, tendr\'{a}s a los $d_1,\ldots,d_r$, que claramente se dividir\'{a}n
+	en cadena. \\
+
+	Ahora, demostremos la existencia de la factorizaci\'{o}n en divisores elementales. Procedemos por inducci\'{o}n sobre el n\'{u}mero de geneadoes de $M$.
+	Nuestra estrategia ser\'{a} encontrar un conjunto generadoe $\{b_1,a_2,\ldots,a_l\}$ de modo que $\gen{b_1} \cap \gen{a_2,\ldots,a_l} = \{0\}$,
+	pues esto nos asegura que $M \cong \gen{b_1} \times \gen{a_2,\ldots,a_l}$ y nos permite utilizar la hip\'{o}tesis de inducci\'{o}n en $\gen{a_2,\ldots,a_l}$,
+	que tiene un generador menos. \\
+
+	Sea $l$ el menor n\'{u}mero de generadores necesarios para generar $M$. Si $l = 0$, $M = \{0\}$, as\'{i} que aqu\'{i} $k=0,s=0$ y hemos acabado.
+	Asumiremos que $l \geq 1$ y demostraremos el paso de inducci\'{o}n. Si $|M| < \infty$, basta descomponer $|M|$ en producto
+	de potencias de primos. Si $|M| = \infty$, $M \cong \mathbb{Z}$ y tambi\'{e}n se tiene. Supuesto hasta $l-1$, sea
+	$\{a_1,\ldots,a_l\}$ conjunto generador de $M \therefore$ (en notaci\'{o}n aditiva)
+	\begin{gather*}
+		M = \gen{a_1,\ldots,a_l} = \{\alpha_1a_1 + \ldots + \alpha_la_l : \alpha_i \in \mathbb{Z}\}
+	\end{gather*}
+	Si siempre que $\alpha_1a_1 + \ldots + \alpha_l a_l = 0$ entonces obligatoriamente $\alpha_i = 0$, y la aplicaci\'{o}n
+	\begin{align*}
+		f: \overbrace{\mathbb{Z} \times \ldots \times \mathbb{Z}}^l & \to M \\
+		(\alpha_1,\ldots,\alpha_l) & \mapsto \alpha_1 a_1 + \ldots + \alpha_l a_l
+	\end{align*}
+	es isomorfismo de grupos $\therefore M \cong \underbrace{\mathbb{Z} \times \ldots \times \mathbb{Z}}_l$ y tomar\'{i}amos $k=0,s=l$. Veamos
+	que $f$ es isomorfismo.
+	\begin{gather*}
+		f\big( (\alpha_1,\ldots,\alpha_l) + (\beta_1,\ldots,\beta_l)\big) = f(\alpha_1 + \beta_1,\ldots,\alpha_l + \beta_l) = \\
+		= (\alpha_1 + \beta_1)a_1 + \ldots + (\alpha_l + \beta_l)a_l = \\
+		= f(\alpha_1,\ldots,\alpha_l) + f(\beta_1,\ldots,\beta_l)
+	\end{gather*}
+	$f$ es suprayectiva, ya que $\{a_1,\ldots,a_l\}$ genera $M$.
+	\begin{align*}
+		\ker f &= \{(\alpha_1,\ldots,\alpha_l) \in \mathbb{Z} \times \ldots \times \mathbb{Z} : f(\alpha_1,\ldots,\alpha_l) = 0\} = \\
+		       &= \{(\alpha_1,\ldots,\alpha_l) \in \mathbb{Z} \times \ldots \times \mathbb{Z} : \alpha_1 a_1 + \ldots + \alpha_l a_l = 0\} = \\
+		       &= \{(0,\ldots,0)\} \text{(por hip\'{o}tesis)}
+	\end{align*}
+	Luego $f$ es isomorfismo.
+
+	Si existiese una combinaci\'{o}n $\alpha_1a_1 + \ldots + \alpha_la_l = 0$ con alg\'{u}n $\alpha_i \neq 0$, vamos a tomar $d \geq 1$ m\'{i}nimo
+	tal que existe esa combinaci\'{o}n lineal, donde $d$ aparece como un coeficiente. Cambiando el orden de los generadores, podemos
+	asumir que $d = \alpha_1$. \\
+
+	Si $\alpha_i$ no fiese m\'{u}ltiplo de $d$, entonces $\exists m,d'$
+	\begin{gather*}
+		\alpha_i = md + d', quad 1 \leq d' < d \\
+		d (a_1 +ma_i) + \alpha_2a_2 + \ldots + d'a_i + \ldots + \alpha_la_l = \quad (*) \\
+		= da_1 + \alpha_2a_2 + \ldots + (dm+d')a_i + \ldots + \alpha_la_l = \\
+		= \alpha_1a_1 + \ldots + \alpha_ia_i + \ldots + \alpha_la_l = 0
+	\end{gather*}
+	Como $M = \gen{a_1,\ldots,a_i,\ldots,a_l} = \gen{a_1+ma_i,\ldots,a_i,\ldots,a_l} \therefore a_1+ma_i,\ldots,a_i,\ldots,a_l$ es un conjunto generador de $M$
+	con $l$ elementos y (*) proporciona una expresi\'{o}n que contradice la mininmalidad de $d$. Luego
+	\begin{gather*}
+		\alpha_i = d\alpha'_i \; \forall \; i=1,\ldots,l, \text{ y cierto } \alpha'_1,\ldots,\alpha'_l
+	\end{gather*}
+	Definimos $b_1 := a_1 + \alpha'_2a_2 + \ldots + \alpha'_la_l$. Claramente
+	\begin{gather*}
+		db_1 = da_1 + \alpha_2a_2 + \ldots + \alpha_la_l = 0 \therefore db_1 = 0
+	\end{gather*}
+	y como $M = \gen{a_1,\ldots,a_l} = \gen{\overbrace{a_1 + \alpha'_2a_2 + \ldots + \alpha'_la_l}^{b_1},a_2,\ldots,a_l}$, entonces $\{b_1,a_2,\ldots,a_l\}$
+	es conjunto generador de $M$ con $l$ elementos. Veamos que $\gen{b_1} \cap \gen{a_2,\ldots,a_l} = \{0\}$. Dado $b \in \gen{b_1} \cap \gen{a_2,\ldots,a_l}$,
+	$b \in \gen{b_1} \implies b=\beta b_1$ para alg\'{u}n $\beta \in \mathbb{Z}$. Como $-b \in \gen{a_2,\ldots,a_l}, -b = \beta_2a_2 + \ldots +
+	\beta_la_l$ para ciertos $\beta_2,\ldots,\beta_l \in \mathbb{Z}$.
+	\begin{gather*}
+		\underbrace{\beta b_1}_{b} + \underbrace{\beta_2a_2 + \ldots + \beta_la_l}_{-b} = 0
+	\end{gather*}
+	Si $\beta$ no es m\'{u}ltiplo de $d$, $\beta = md + d' \therefore 0=(md+d')b_1 + \beta_2a_2 + \ldots + \beta_la_l = d'b_1 + \beta_2a_2 + \ldots +
+	\beta_la_l$. Lo que es imposible por minimalidad de $d$. Por ello, $\beta = md$ para alg\'{u}n $m \in \mathbb{Z} \therefore$
+	\begin{gather*}
+		b = \beta b_1 = m(db_1) = 0
+	\end{gather*}
+	$\therefore \gen{b_1} \cap \gen{a_2,\ldots,a_l} = \{0\}$. Adem\'{a}s,
+	\begin{gather*}
+		\gen{b_1} + \gen{a_2,\ldots,a_l} = M
+	\end{gather*}
+	ya que $\{b_1,a_2,\ldots,a_l\}$ genera a $M$. As\'{i}, $M \cong \gen{b_1} \times \gen{a_2,\ldots,a_l}$. \\
+
+	Aplicando la hip\'{o}tesis de inducci\'{o}n a $\gen{a_2,\ldots,a_l}$ obtenemos que $\gen{a_2,\ldots,a_l}$ es isomorfo a un producto cartesiano
+	(n\'{u}mero finito de factores) de grupos ciclos, por lo que $M$ tambi\'{e}n es isomorfo a un producto cartesiano de
+	grupos c\'{i}clicos. Factorizando los factores que correspondan a grupos c\'{i}clicos finitos en producto cartesiano de
+	grupos c\'{i}clicos de orden potencia de primo, tenemos una descomposici\'{o}n en divisores elementales (la segunda forma). \\
+
+	Y con esto, hemos demostrado existencia de la descomposici\'{o}n. Falta ver la unicidad. Para ello, vamos a ver que podemos calcular las bases
+	y exponentes de la descomposici\'{o}n solamente con $M$. Sea $f:M \to \mathbb{Z}_{p_1^{e_1}} \times \ldots \times \mathbb{Z}_{p_k^{e_k}} \times
+	\overbrace{\mathbb{Z} \times \ldots \times \mathbb{Z}}^{l}$ un isomorfismo. Considero
+	\begin{gather*}
+		T:=\{a \in M:\exists \alpha \in \mathbb{Z}, \alpha \neq 0, \text{ t.q. } \alpha a=0\}
+	\end{gather*}
+	Vemos la imagen de $T$
+	\begin{gather*}
+		f(T) = \{(\overline{\alpha}_1,\ldots,\overline{\alpha}_k,\alpha_{k+1},\ldots,\alpha_{k+s}) \in \mathbb{Z}_{p_1^{e_1}} \times \ldots \times \mathbb{Z}_{p_k^{e_k}} \times \overbrace{\mathbb{Z} \times \ldots \times \mathbb{Z}}^{l} : f(\alpha a) = \alpha f(a) = 0\} = \\
+		= \mathbb{Z}_{p_1^{e_1}} \times \ldots \times \mathbb{Z}_{p_k^{e_k}} \times \{0\} \times \ldots \times \{0\}
+	\end{gather*}
+	Conocemos $|T| = p_1^{e_1} \cdots p_k^{e_k}$, y conocemos los distintos primos que aparecen entre $p_1,\ldots,p_k$. Dado $p$ primo, observamos que
+	\begin{gather*}
+		|\{\overline{a} \in \mathbb{Z}_{p_i^{e_i}} : p^{e}\cdot\overline{a} = \overline{0}\}| = \mathrm{mcd}(p^{e},p_i^{e_i})
+	\end{gather*}
+	En efecto, $p^{e}\overline{a} = \overline{0} \iff p_i^{e_i}$ divide a $p^{e}a$, as\'{i}
+	\begin{itemize}
+		\item Si $p \neq p_i$, entonces $p_i^{e_i} | a \therefore \overline{a}=\overline{0} \therefore$ hay $1 = \mathrm{mcd}(p^{e},p_i^{e_i})$ elementos
+			$\overline{a} \text{ t.q. } p^{e}\overline{a} = \overline{0}$
+		\item Si $p=p_i$, y $e \geq e_i$, entonces hay $p_i^{e_i} = \mathrm{mcd}(p_e,p_i^{e_i})$ elementos $\overline{a} \text{ t.q. }
+			p^{e}\overline{a} = \overline{0}$
+		\item Si $p=p_i$ y $e < e_i$, entonces $p_i^{e_i}|p^{e}a \iff p_i^{e_i-e}|a \iff \overline{a} \in \gen{\overline{p^{e_i-e}}}$. Como
+			$|\gen{\overline{p^{e_i-e}}}| = |\overline{p^{e_i-e}}|$, ya que es subgrupo de $\mathbb{Z}_{p_i^{e_i}}$ generado por $\overline{p^{e_i-e}}
+			= p^{e_i-e} \cdot \overline{1}$. Luego $|p^{e_i-e}| = \frac{|\overline{1}|}{\mathrm{mcd}(|\overline{1}|,p^{e_i-e})} =
+			\frac{p_i^{e_i}}{p^{e_i-e}}= p^{e} \therefore$ hay $p^{e} = \mathrm{mcd}(p^{e},p_i^{e_i}$ elementos $\overline{a} \text{ t.q. }
+			p^{e}\overline{a} = \overline{0}$
+	\end{itemize}
+	Luego
+	\begin{gather*}
+		|\{(\overline{\alpha}_1,\ldots,\overline{\alpha}_k,0,\ldots,0) : p^{e}(\overline{\alpha}_1,\ldots,\overline{\alpha}_k,0,\ldots,0) =
+		(\overline{0},\ldots,\overline{0},0,\ldots,0)\}| = \\
+		= |\{(\overline{\alpha}_1,\ldots,\overline{\alpha}_k,0,\ldots,0): p^{e}\overline{\alpha}_1 = \overline{0},\ldots\}| =
+		\prod_{i=1}^{k} \mathrm{mcd}(p^{e},p_i^{e_i})
+	\end{gather*}
+	Por el isomorfismo, $a \in T$ cumple que $p^{e}a = 0 \iff f(a) \in f(T)$ cumple que $p^{e}f(a) = 0 \therefore$
+	\begin{gather*}
+		|\{a \in T : p^{e}a = 0\}| = |\{(\overline{\alpha}_1,\ldots,\overline{\alpha}_k,0,\ldots,0) \in \mathbb{Z}_{p_1^{e_1}} \times \ldots
+		\times \mathbb{Z}_{p_k^{e_k}} \times \{0\} \times \ldots \times \{0\}\}| = \prod_{i=1}^{k}  \mathrm{mcd}(p^{e},p_i^{e_i})
+	\end{gather*}
+	$\therefore$ podemos calcular estos n\'{u}meros a partir de $M \; \forall p \in \{p_1,\ldots,p_k\}$ y $e \geq 1$. Observamos
+	\begin{gather*}
+		\frac{\mathrm{mcd}(p^{e},p_1^{e_1}) \cdots \mathrm{mcd}(p^{e},p_k^{e_k})}{\mathrm{mcd}(p^{e-1},p_1^{e_1}) \cdots \mathrm{mcd}(p^{e-1},p_k^{e_k})} = p
+		\quad (**)
+	\end{gather*}
+	\begin{itemize}
+		\item Si $p_i \neq p$ entonces $\mathrm{mcd}(p^{e},p_i^{e_i}) = 1 = \mathrm{mcd}(p^{e-1},p_i^{e_i})$ y ``esos factores'' no contribuyen
+		\item Si $p_i = p$ y $e_i < e$ entonces $\mathrm{mcd}(p^{e},p_i^{e_i}) = p_i^{e_i} = \mathrm{mcd}(p^{e-1},p_i^{e_i}) \therefore$ no contribuyen
+		\item Si $p_i = p$ y $e_i \geq e$ entonces $\mathrm{mcd}(p^{e},p_I^{e_i}) = p^{e}$ y $\mathrm{mcd}(p^{e-1},p_i^{e_i}) = p^{e-1}$
+	\end{itemize}
+
+	As\'{i}, podemos ver que la descomposici\'{o}n se saca solo de $M$. Continuamos para la unicidad de $s$. Si $2M := \{2a : a \in M\}$, que es subgrupo
+	de $M$, luego es normal. Entonces
+	\begin{gather*}
+		|\faktor{M}{T + 2M}| = 2^{s}
+	\end{gather*}
+	$\therefore$ podemos adivinar $s$. En efecto, escribimos
+	\begin{align*}
+		f: M & \to \mathbb{Z}_{p_1^{e_1}} \times \ldots \times \mathbb{Z}_{p_k^{e_k}} \times \overbrace{\mathbb{Z} \times \ldots \times \mathbb{Z}}^s \\
+		a & \mapsto (f_1(a),\ldots,f_k(a),f_{k+1}(a),\ldots,f_{k+s}(a))
+	\end{align*}
+	Las aplicaciones $f_i:M \to \mathbb{Z}$, con $i=k+1,\ldots,k+s$ son homomorfismos de grupos por serlo $f \therefore$
+	\begin{align*}
+		g: M & \to \overbrace{\mathbb{Z}_2 \times \ldots \times \mathbb{Z}_2}^{s}  \\
+		a & \mapsto (\overline{f_{k+1}(a)},\ldots,\overline{f_{k+s}(a)})
+	\end{align*}
+
+	Vamos a ver que $g$ es epimorfismo. Dado $(\overline{\alpha}_1,\ldots,\overline{\alpha}_s) \in \mathbb{Z}_2 \times \ldots \times \mathbb{Z}_2$ como $f$ es
+	isomorfismo, existe $a \in M$ tal que $f(a) = (\overline{0},\ldots,\overline{0},\alpha_1,\ldots,\alpha_s) \therefore g(a) =
+	(\overline{\alpha}_1,\ldots,\overline{\alpha}_s) \therefore$ $g$  es suprayectiva. \\
+
+	Veamos que $\ker g = T + 2M$. Empezamos con el contenido $T + 2M \subseteq \ker g$. Dado $a \in T$, $f(a) = (\overline{\alpha}_1,\ldots,\overline{\alpha}_k,
+	0,\ldots,0) \in f(T) \therefore g(a) = (\overline{0},\ldots,\overline{0}) \therefore a \in \ker g \therefore T \subseteq \ker g$. Dado $a \in 2M$,
+	$a = b + b = 2b$ para alg\'{u}n $b \in M$.
+	\begin{gather*}
+		f(a) = f(b) + f(b) = 2f(b) = (2\overline{\alpha}_1,\ldots,2\overline{\alpha}_k,2\alpha_{k+1},\ldots,2\alpha_{k+s}) \\
+		g(a) = (\overline{2\alpha_{k+1}},\ldots,\overline{2\alpha_{k+s}}) = (\overline{0},\ldots,\overline{0}) \therefore 2M \subseteq \ker g \\
+		\therefore T + 2M \subseteq \ker g
+	\end{gather*}
+
+	Veamos el otro contenido. Dado $a \in \ker g$, $f_{k+1}(a) = 2\alpha_{k+1},\ldots,f_{k+s}(a)=2\alpha_{k+s}$ para ciertos $\alpha_{k+1},\ldots,\alpha_{k+s}
+	\in \mathbb{Z}$. $f(a) = (\overline{\alpha_1},\ldots,\alpha_k,2\alpha_{k+1},\ldots,2\alpha_{k+s})$ para ciertos $\alpha_1,\ldots,\alpha_k,\ldots,
+	\alpha_{k+s} \in \mathbb{Z}$. Como $(\overline{\alpha}_1,\ldots,\overline{\alpha}_k,0,\ldots,0) \in f(T)$ existe $b \in T$ tal que
+	\begin{gather*}
+		f(b) = (\overline{\alpha}_1,\ldots,\overline{\alpha}_k,0,\ldots,0)
+	\end{gather*}
+	Como $f$ es isomorfismo, existe $c \in M$ tal que
+	\begin{gather*}
+		f(c) = (\overline{0},\ldots,\overline{0},\alpha_{k+1},\ldots,\alpha_{k+s}) \\
+		\therefore f(b + 2c) = (\overline{\alpha}_1,\ldots,\overline{\alpha}_k,2\alpha_{k+1},\ldots,2\alpha_{k+s}) = f(a)
+	\end{gather*}
+	Como $f$ es isomorfismo, esto implica $a = b + 2c \in T + 2M \therefore \ker g \subseteq T + 2M \therefore \ker g = T + 2M$. Por el primer teorema
+	de isomorf\'{i}a
+	\begin{gather*}
+		\overbrace{\mathbb{Z}_2 \times \ldots \times \mathbb{Z}_2}^{s} = \im g \cong \faktor{M}{\ker g} = \faktor{M}{T+2M} \\
+		\therefore |\faktor{M}{T+2M}| = |\overbrace{\mathbb{Z}_2 \times \ldots \times \mathbb{Z}_2}^{s}| = 2^{s} \\
+		\therefore s = \log_2 |\faktor{M}{T+2M}|
+	\end{gather*}
+	es \'{u}nico.
+
+	\begin{figure}[h]
+		\centering
+		\includegraphics[height=4cm,width=4cm]{square-107.png}
+		\caption{Forma \'{o}ptima de meter 107 cuadrados en un cuadrado}
+	\end{figure}
+	
+	\textit{Ejemplo:}
+	Este ejemplo es para ver que los valores se sacan solo de $M$.Vamos a ver el caso de $7^3 7^2 7^3 7^5 7^6 11^2 11^7 11^3$.
+	\begin{gather*}
+		|T| = 7^{19} 11^{12}
+	\end{gather*}
+	Empezamos con $p=7$
+	\begin{gather*}
+		\begin{array}{c|c}
+			e & \text{num de } 7^{e} \text{ que tengo} \\ \hline
+			19 & 0 \\
+			18 & 0 \\
+			\vdots & \vdots \\
+			7 & 0 \\
+			6 & 1 \\
+			5 & 1 \\
+			4 & 0 \\
+			3 & 2 \\
+			2 & 1 \\
+			1 & 0
+		\end{array}
+	\end{gather*}
+	Para ver como sacar los n\'{u}meros de esa tabla, prueba a meter $p,e$ en (**). Puesto que cada $e_i$
+	es menor o igual que el exponente de $p_i$ en la factorizaci\'{o}n de $|T|$, empezando desde ese exponente y bajando hasta 1 podemos
+	encontrar los distintos $p_i^{e_i}$ gracias a (**). \\
+
+	\begin{corol}
+		Sea $M$ un grupo abeliano finito. Para todo $d$ divisor del orden de $M$, existe alg\'{u}n subgrupo de $M$ de ese orden.
+	\end{corol}
+
+	\dem Aqu\'{i} $M$ es un grupo abeliano finito
+	\begin{gather*}
+		\therefore M \cong \mathbb{Z}_{p_1^{e_1}} \times \ldots \times \mathbb{Z}_{p_k^{e_k}}
+	\end{gather*}
+	Dado $d$ divisor de $|M| = p_1^{e_1} \cdots p_k^{e_k}$,
+	\begin{gather*}
+		d = p_1^{e'_1} \cdots p_k^{e'_k} \quad \text{con } e'_i \leq e_i \; \forall i=1,\ldots,k
+	\end{gather*}
+	Como $\mathbb{Z}_{p_i^{e_i}}$ tiene un subgrupo $H_i$ de orden $p_i^{e'_i}$ entonces $H_1 \times \ldots \times H_k$ es subgrupo de $\mathbb{Z}_{p_1^{e_1}}
+	\times \ldots \times \mathbb{Z}_{p_k^{e_k}}$ y $|H_1 \times \ldots \times H_k| = p_1^{e'_1} \cdots p_k^{e'_k} = d$. Por el isomorfismo
+	$H_1 \times \ldots \times H_k$ se corresponde con un subgrupo de $M$ de orden $d$. \\
+
+	\textit{Ejemplo: } $\gen{13} \leq (\mathbb{Z},+), \; \faktor{\mathbb{Z}}{\gen{13}}$ es grupo abeliano.
+	\begin{align*}
+		f: \mathbb{Z} & \to \mathbb{Z}_{13} \\
+		a & \mapsto \overline{a}
+	\end{align*}
+	es epimorfismo de grupos, y $\ker f = \gen{13}$. Luego, por el primer teorema de isomorf\'{i}a $\faktor{\mathbb{Z}}{\gen{13}} \cong \mathbb{Z}_{13}$. \\
+
+	\textit{Ejemplo: } Menos trivial. $\gen{(1,2),(3,4))} \leq \mathbb{Z} \times \mathbb{Z}$
+	\begin{gather*}
+		\faktor{\mathbb{Z}\times\mathbb{Z}}{\gen{(1,2),(3,4)}} \underset{(*)}{=} \gen{\overline{(1,0)},\overline{(0,1)}} \cong ??? \\
+		(*) \overline{(a,b)} := (a,b) + \gen{(1,2),(3,4)}
+	\end{gather*}
+	En general, dado $\mathbb{Z}^{n} = \overbrace{\mathbb{Z} \times \ldots \times \mathbb{Z}}^{n}$ y $N = \gen{b_1,\ldots,b_m} \leq \mathbb{Z}^{n}$.
+	A\~{n}adiendo como generador a $(0,\ldots,0)$, podemos asumir que $m \geq n$. Sea
+	\begin{gather*}
+		A = \left[ b_1 | \ldots | b_m \right] \in M_{n \times m}(\mathbb{Z})
+	\end{gather*}
+	Si existen $P \in M_n(\mathbb{Z})$ y $Q \in M_m(\mathbb{Z})$ invertibles, cuyos inversos tienen entradas en $\mathbb{Z}$, tal que
+	\begin{gather*}
+		PAQ = 
+		\begin{bmatrix}
+			\hat{d}_1 & & &0&\ldots&0 \\
+			 & \ddots & &0&\ldots&0 \\
+			& & \hat{d}_n &0&\ldots&0
+		\end{bmatrix}
+	\end{gather*}
+	con $\hat{d}_i \geq 1 \; \forall d=1,\ldots,n$. Entonces definimos
+	\begin{align*}
+		f: \mathbb{Z}^{n} & \to \mathbb{Z}_{\hat{d}_1} \times \ldots \times \mathbb{Z}_{\hat{d}_n} \\
+		v & \mapsto \overline{Pv}
+	\end{align*}
+	Resulta que $f$ es epimorfismo de grupos con n\'{u}cleo $N$. Por lo tanto, por el primer teorema de isomorf\'{i}a
+	\begin{gather*}
+		\faktor{\mathbb{Z}^{n}}{N} \cong \mathbb{Z}_{\hat{d}_1} \times \ldots \times \mathbb{Z}_{\hat{d}_n}
+	\end{gather*}
+	factorizando los $\hat{d}_i$ que sean mayores o iguales que 2, se alcanza la descomposici\'{o}n en divisores elementales. Veamos que $f$ es suprayectiva.
+	Dado $w \in \mathbb{Z}_{\hat{d}_1} \times \ldots \times \mathbb{Z}_{\hat{d}_n}$.
+	\begin{gather*}
+		w =
+		\begin{bmatrix}
+			\overline{\alpha}_1 \\ \vdots \\ \overline{\alpha}_n
+		\end{bmatrix}
+	\end{gather*}
+	para cierto $\alpha_1,\ldots,\alpha_n \in \mathbb{Z}$. Tomamos
+	\begin{gather*}
+		v := P^{-1}
+		\begin{bmatrix}
+			\alpha_1 \\ \vdots \\ \alpha_n
+		\end{bmatrix} \in \mathbb{Z}^{n} \\
+		f(v) = \overline{Pv} = \overline{PP^{-1}
+		\begin{bmatrix}
+			\alpha_1 \\ \vdots \\ \alpha_n
+		\end{bmatrix}
+		} = \begin{bmatrix}
+			\overline{\alpha}_1 \\ \vdots \\ \overline{\alpha}_n
+		\end{bmatrix} = w
+	\end{gather*}
+	Por lo que $f$ es suprayectiva. Veamos que $\ker f = N$.
+	\begin{gather*}
+		\ker f = \left\{v \in \mathbb{Z}^{n} : \overline{Pv} = \begin{bmatrix} \overline{0} \\ \vdots \\ \overline{0} \end{bmatrix}\right\} = \\
+		\left\{v \in \mathbb{Z}^{n} : Pv = \begin{bmatrix} \hat{d}_1 \alpha_1 \\ \vdots \\ \hat{d}_n \alpha_n \end{bmatrix}
+		\text{ para ciertos } \alpha_1,\ldots,\alpha_n \in \mathbb{Z}\right\} = \\
+		\left\{ v \in \mathbb{Z}^{n} : Pv = D \begin{bmatrix} \alpha_1 & \vdots & \alpha_n \end{bmatrix}
+		\text{ para ciertos } \alpha_1,\ldots,\alpha_n \in \mathbb{Z}\right\} = \\
+		\left\{ v \in \mathbb{Z}^{n} : \cancel{P}v = \cancel{P}AQw \text{ para cierto } w \in \mathbb{m} \right\} =
+		\left\{ v \in \mathbb{Z}^{n} : v = Aw \text{ para alg\'{u}n } w \in \mathbb{Z}^{m} \right\} = \\
+		\{v \in \mathbb{Z}^{n} : v \text{ es una combinaci\'{o}n lineal con coeficientes enteros de las columnas de } A\} = \\
+		= \gen{b_1,\ldots,b_m} = N
+	\end{gather*}
+	Luego, $f$ induce un isomorfismo
+	\begin{gather*}
+		\faktor{\mathbb{Z}^{n}}{N} \cong \mathbb{Z}_{\hat{d}_1} \times \ldots \times \mathbb{Z}_{\hat{d}_n}
+	\end{gather*}
+	Cabe observar que
+	\begin{gather*}
+		\mathbb{Z}_0 = \faktor{\mathbb{Z}}{\gen{0}} = \faktor{\mathbb{Z}}{\{0\}} \cong \mathbb{Z} \\
+		\mathbb{Z}_1 = \faktor{\mathbb{Z}}{\gen{1}} = \faktor{\mathbb{Z}}{\mathbb{Z}} = \{\overline{0}\}
+	\end{gather*} \\
+
+	\textit{Ejemplo:} Describir $\faktor{\mathbb{Z}^2}{\gen{(2,2)^{T},(2,12)^{T}}}$ como producto de c\'{i}clicos. Aqu\'{i} $N = \gen{(2,2)^{T},(2,12)^{T}}$.
+	Observamos que
+	\begin{gather*}
+		\overline{(1,1)} \neq \overline{(0,0)} \\
+		2 \cdot \overline{(1,1)} = \overline{2\cdot(1,1)} = \overline{(0,0)}
+	\end{gather*}
+	Por lo que el orden de $\overline{(1,1)}$ es 2. Formamos la matriz $A$:
+	\begin{gather*}
+		A =
+		\begin{bmatrix}
+			2 & 2 \\
+			2 & 12
+		\end{bmatrix}
+	\end{gather*}
+	Vamos a ir haciendo transformaciones elementales cuyas inversas tienen solo entradas enteras, estas son:
+	\begin{gather*}
+		F_{ij} \quad \text{cambio de filas} \\
+		F_i(\alpha), \alpha \in \{1,-1\} \quad \text{multiplicar la fila}
+		F_{ij}(\alpha), \alpha \in \mathbb{Z} \quad \text{sumar m\'{u}ltiplo de otra fila}
+	\end{gather*}
+	Y sus correspondientes en columnas. As\'{i}:
+	\begin{gather*}
+		\begin{bmatrix}
+			2 & 2 \\
+			2 & 12
+		\end{bmatrix} \overset{F_{21}(-1))}{\longrightarrow}
+		\begin{bmatrix}
+			2 & 2 \\
+			0 & 10
+		\end{bmatrix} \overset{C_{21}(-1)}{\longrightarrow}
+		\begin{bmatrix}
+			2 & 0 \\
+			0 & 10
+		\end{bmatrix}
+	\end{gather*}
+	As\'{i}, sabemos que
+	\begin{gather*}
+		\faktor{\mathbb{Z}^2}{\gen{(2,2)^{T},(2,12)^{T}}} \cong \mathbb{Z}_2 \times \mathbb{Z}_{10}
+	\end{gather*} \\
+
+	\textit{Otro ejemplo: } $\faktor{\mathbb{Z}^{3}}{N}$ donde
+	\begin{gather*}
+		N = \gen{(-18,-22,20),(-4,-4,4),(14,18,-16)}
+	\end{gather*}
+	\begin{gather*}
+		A =
+		\begin{bmatrix}
+			-18 & -4 & 14 \\
+			-22 & -4 & 18 \\
+			20  &  4 & -16
+		\end{bmatrix} \overset{C_{31}(1)}{\longrightarrow}
+		\begin{bmatrix}
+			-18 & -4 & -4 \\
+			-22 & -4 & -4 \\
+			20 & 4 & 4
+		\end{bmatrix} \overset{C_{32}(-1)}{\longrightarrow} 
+		\begin{bmatrix}
+			-18 & -4 & 0 \\
+			-22 & -4 & 0 \\
+			20 & 4 & 0
+		\end{bmatrix} \overset{F_{31}(1)}{\longrightarrow} \\
+		\begin{bmatrix}
+			2 & 0 & 0 \\
+			-22 & -4 & 0 \\
+			20 & 4 & 0
+		\end{bmatrix} \overset{F_{32}(1)}{\longrightarrow}
+		\begin{bmatrix}
+			2 & 0 & 0 \\
+			-22 & -4 & 0 \\
+			-2 & 0 & 0
+		\end{bmatrix} \overset{F_{31}(1)}{\longrightarrow} 
+		\begin{bmatrix}
+			2 & 0 & 0 \\
+			-22 & -4 & 0 \\
+			0 & 0 & 0
+		\end{bmatrix} \overset{F_{21}(11)}{\longrightarrow} 
+		\begin{bmatrix}
+			2 & 0 & 0 \\
+			0 & -4 & 0 \\
+			0 & 0 & 0
+		\end{bmatrix} \overset{F_{2}(-1)}{\longrightarrow} \\
+		\begin{bmatrix}
+			2 & 0 & 0 \\
+			0 & 4 & 0 \\
+			0 & 0 & 0
+		\end{bmatrix}
+	\end{gather*}
+	Luego, nos queda que
+	\begin{gather*}
+		\faktor{\mathbb{Z}^{3}}{N} \cong \mathbb{Z}_2 \times \mathbb{Z}_4 \times \mathbb{Z}
+	\end{gather*}
+
+	\begin{teoma}
+		Podemos clasificar grupos $U(n)$ de la siguiente forma:
+		\begin{gather*}
+			U(2^{n}) \cong C_2 \times C_{2^{n-2}}, \quad n \geq 2 \\
+			U(p^{e}) \cong C_z, \quad p \text{ primo}, p \neq 2, z = |U(p^{e})| \\
+			U(n_1n_2) \cong U(n_1) \times U(n_2), \quad \mathrm{mcd}(n_1,n_2) = 1
+		\end{gather*}
+	\end{teoma}
+
+	\dem Sea $n \geq 3$. Entonces
+	\begin{gather*}
+		|U(2^{n})| = \varphi(2^{n}) = 2^{n-1} \therefore U(2^{n}) \cong C_{2^{e_1}} \times \ldots \times C_{2^{e_k}}
+	\end{gather*}
+	con $e_1 + \ldots + e_k = n-1$. Contamos el n\'{u}mero de elementos cuyo cuadrado es el neutro. En el lado de la derecha tenemos
+	\begin{gather*}
+		(a_1,\ldots,a_k)^2 = (e,\ldots,e) \iff (a_1^2,\ldots,a_k^2) = (e,\ldots,e) \iff a_1^2 = e, \ldots, a_k^2 = e
+	\end{gather*}
+	Cada $C_{2^{e_i}}$ tiene exactamente dos elementos cuyo cuadrado es el neutro $\therefore$ en $C_{2^{e_1}} \times \ldots \times C_{2^{e_k}}$ tiene
+	exactamente $2^{k}$ elementos cuyo cuadrado es el neutro. En el lado de la izquierda, $\overline{a} \in U(2^{n})$
+	\begin{gather*}
+		\overline{a}^2 = \overline{1} \iff \overline{(a+1)(a-1)} = \overline{0} \iff 2^{n} | (a-1)(a+1)
+	\end{gather*}
+	Observamos que $\overline{a} \in U(2^{n}) \implies a$ es impar. As\'{i}, $2 | a-1$ y $2 | a+1$, pero si $d|a-1$ y $d|a+1$, entonces
+	$d$ divide a $(a+1)-(a-1) = 2$, luego $\mathrm{mcd}(a+1,a-1) = 2$. Luego las posibilidades son que $2^{n} | a+1, 2^{n-1}|a+1,2^{n}|a-1,2^{n-1}|a-1$.
+	Por ello,
+	\begin{gather*}
+		\overline{a} \equiv \overline{-1},\quad a=2^{n-1}-1 \implies \overline{a}^2 = 1,\quad \overline{a} = \overline{1},\quad a = 2^{n-1}+1 \implies
+		\overline{a}^2 = \overline{1}
+	\end{gather*}
+	Luego, solo hay 4 distintos elementos cuyo cuadrado es el neutro. Por ello, sabemos que $k=2$, y as\'{i}, solo descomponemos el grupo en dos c\'{i}clicos.
+	\begin{gather*}
+		U(2^{n}) \cong C_{2^{e_1}} \times C_{2^{e_2}}
+	\end{gather*}
+	
+	Basta comprobar que $\overline{a} = \overline{2^{n}-1}$ no es cuadrado en $U(2^{n})$ para concluir que $e_1=1$ o $e_2=1 \therefore$
+	\begin{gather*}
+		U(2^{n}) \cong C_2 \times C_{2^{n-2}}
+	\end{gather*}
+
+	\begin{teoma}
+		\textit{Teorema de Cauchy:} Sea $G$ grupo finito y $p$ primo tal que $p$ divide a $|G|$. Entonces, existe alg\'{u}n elemento del grupo
+		de orden $p$.
+	\end{teoma}
+
+	\dem Sea $X := \{(x_1,\ldots,x_p) \in \overbrace{G \times \ldots \times G}^{p} : x_1\cdots x_p = e\}$. La condici\'{o}n $x_1\cdots x_p = e$ equivale
+	a $xp = (x_1\cdots x_{p-1})^{-1} \therefore |X| = |G|^{p-1} \therefore p$ divide a $|X|$. Nos fijamos en $S_X$, y en particular en
+	\begin{align*}
+		f: X & \to X \\
+		(x_1,\ldots,x_p) & \mapsto (x_p,x_1,\ldots,x_{p-1})
+	\end{align*}
+	Claramente $f^{p} = \mathrm{Id}$. Adem\'{a}s, $f \neq \mathrm{Id}$. \textbf{FALTA DE HACER ALGO, CHEMA LO SUBIRA}. $\therefore$
+	el orden de $f$ como elemento de $S_X$ es $p$ $\therefore$ $|\gen{f}|=p$. Declaramos que $\mathbb{X},\mathbb{Y} \in X$ son equivalantes si
+	\begin{gather*}
+		\mathbb{X} \equiv \mathbb{Y} \iff \exists i \geq 0 \text{ t.q. } \mathbb{Y}=f^{i}(\mathbb{X})
+	\end{gather*}
+	Esto es claramente una relaci\'{o}n de equivalencia. As\'{i}, vemos que
+	\begin{gather*}
+		[\mathbb{X}] = \{f^{i}(\mathbb{X}) : 0 \leq i \leq p-1\} = \{\mathbb{X}, f(\mathbb{X}), \ldots, f^{p-1}(\mathbb{X})\}
+	\end{gather*}
+	Sin embargo, $|[\mathbb{X}]| \leq p$. Para que $|[\mathbb{X}]| < p$, debe ocurrir que $\exists 0 \leq i < j \leq p-1 \text{ t.q. } f^{i}(\mathbb{X}) =
+	f^{j}(\mathbb{X}) \therefore f^{j-i}(\mathbb{X}) = \mathbb{X}$ con $1 \leq j-i \leq p-1 \therefore f^{j-i} \neq \mathrm{Id}$ y $f^{j-i} \in \gen{f}$.
+	Como $|\gen{f}| = p$ primo, $\gen{f^{j-i}} = \gen{f} \therefore$ todos los elementos $f^{k}(\mathbb{X}) \in \gen{f}$ cumplen que $f^{k}(\mathbb{X}) =
+	\mathbb{X} \therefore \mathbb{X}$ tiene todas sus entradas iguales. Por ello, $[\mathbb{X}] = \{\mathbb{X}\}$ de un solo elementos $\therefore$
+	podemos separar las distintas clases de equivalencia en dos tipos
+	\begin{gather*}
+		\begin{cases}
+			[\mathbb{X}_1], \ldots, [\mathbb{X}] \to |[\mathbb{X}_i]| = 1 \\
+			[\mathbb{Y}_1], \ldots, [\mathbb{Y}] \to |[\mathbb{Y}_i]| = p \\
+		\end{cases}
+	\end{gather*}
+	Por ser clase de equivalencia
+	\begin{gather*}
+		X = [\mathbb{X}_1] \sqcup \ldots \sqcup [\mathbb{X}_n] \sqcup [\mathbb{Y}_1] \sqcup \ldots \sqcup [\mathbb{Y}_m]
+	\end{gather*}
+	Luego, m\'{o}dulo $p$
+	\begin{gather*}
+		0 \equiv |G|^{p-1} = |X| \equiv n + pm \equiv n \; (\mathrm{mod} \; p)
+	\end{gather*}
+	Luego el n\'{u}mero de clases de equivalenia de tama\~{n}o 1 es m\'{u}ltiplo de $p$. Como
+	\begin{gather*}
+		\begin{rcases}
+			(e,\ldots,e) \in X \\
+			[(e,\ldots,e)] = \{(e,\ldots,e)\}
+		\end{rcases} \therefore n \geq 1
+	\end{gather*}
+	Comom $n$ es m\'{u}ltiplo de $p$ y $n \geq 1$ entonces $\exists x \in X, \; \mathbb{X} \neq (e,\ldots,e) \text{ t.q. } [\mathbb{X}] = \{\mathbb{X}\}
+	\therefore f(\mathbb{X}) = \mathbb{X} \therefore \mathbb{X} = (a,\ldots,a)$ para alg\'{u}n $a \in G, \; a \neq e$. Como $\mathbb{X} \in X$,
+	$a^{p} = e$ y $a \neq e$, entonces $|a| = p$, y $G$ tiene alg\'{u}n elementos de orden $p$
+	
+	
+	\subsection{Teorema de Jordan-H\"{o}lder}
+
+	(Este tema no entra para examen, al menos este a\~{n}o :P) \\
+
+	
+	
+
+	\subsection{Ejercicios} % ================== EJERCICIOS =====================================================================================================
+
+	\ej{12H2}{Da dos razones por las que el conjunto de los impares junto con la suma no es grupo.}
+
+	\begin{enumerate}
+		\item La suma de impares es par, por lo que no es una operaci\'{o}n interna.
+		\item No existe elemento neutro.
+	\end{enumerate}
+
+	\ej{15H2}{Sea $a$ perteneciente a un grupo, tal que $a^{12} = e$. Expresa el inverso de los elementos $a$, $a^{6}$, $a^{8}$, y $a^{11}$
+	usando la forma $a^{k}$ siendo $k$ un natural.}
+
+	$$
+	e = a^{12} = a \cdot a^{11} = a^{6} \cdot a^{6} = a^{8} \cdot a^{4} = a^{11} \cdot a
+	$$
+
+	\ej{16H2}{Muestra que el conjunto $\{5,15,25,35\}$ bajo la multiplicaci\'{o}n m\'{o}dulo 40 es grupo. Cu\'{a}l es la identidad? Hay
+	alguna relaci\'{o}n con este grupo y $U(8)$}
+
+	Vamos a hacer la tabla de Cayley a mano para el grupo.
+
+	\begin{tabular}{l|llll}
+		$\cdot$ & 5  & 15 & 25 & 35 \\ \hline
+		5       & 25 & 35 & 5  & 15 \\
+		15      & 35 & 25 & 15 & 5  \\
+		25      & 5  & 15 & 25 & 35 \\
+		35      & 15 & 5  & 35 & 25
+	\end{tabular}
+
+	Vemos que $e = 25$, y que $a^{-1} = a$ para todos los elementos. Calculando la tabla a mano de $U(8)$, vemos que son isomorfas.
+	Este hecho se ve mejor si ponemos el orden de las filas y columnas como $\bar{3}, \bar{5}, \bar{1}, \bar{7}$.
+
+	\ej{19H2}{Supongamos que $a$ y $b$ pertenecen a un grupo donde $a^{5} = b^{7} = e$. Escribe $a^{-2}b^{-4}$ y $(a^{2}b^{4})^{-2}$ sin
+	usar exponentes negativos.}
+
+	Usando las propiedades de los exponentes en grupos, podemos ver que:
+	\begin{gather*}
+		a^{-2}b^{-4} = ea^{-2}b^{-4}e = a^{5}a^{-2}b^{-4}b^{7} = a^{3}b^{3} \\
+		(a^{2}b^{4})^{-2} = ((a^{2}b^{4})^{-1})^2 = (b^{-4}a^{-2})^2 = (b^{3}a^{3})^2
+	\end{gather*}
+
+	\ej{23H2}{Un profesor de álgebra abstracta tenía la intención de darle a una mecanógrafa una lista de nueve enteros que
+	forman un grupo bajo la multiplicación módulo 91. En cambio, uno de los nueve enteros se omitió inadvertidamente, de modo
+	que la lista apareció como 1, 9, 16, 22, 53, 74, 79, 81. ¿Qué entero fue omitido? (¡Esto realmente sucedió!).}
+
+	Podr\'{i}amos hacer toda la tabla de Cayley hasta ver uno que falta, pero basta darse cuenta de que con hacer una sola
+	fila o columna que no sea la del 1 (por ser el elemento neutro) lo tenemos. Esto se debe a que si un subgrupo finito tiene
+	$n$ elementos, entonces el conjunto de multiplicar todos ellos por un elemento cualquiera del mismo no produce ning\'{u}n elemento
+	repetido. Por ello, si nos fijamos en la fila del 9, por ejemplo, vemos que necesitamos el 29.
+	
+	\ej{29H2}{Prueba que para cualquier elementos $a,b \in G$ y $n \in \mathbb{N}$, se cumple que $(a^{-1}ba)^{n} = a^{-1}b^{n}a$}
+
+	Este resultado es como multiplicamos matrices:
+	\begin{gather*}
+		(a^{-1}ba)^{n} = a^{-1}baa^{-1}ba \ldots a^{-1}baa^{-1}ba \underset{\text{asociativ.}}{=} a^{-1}b(aa^{-1})b(aa^{-1})\ldots (aa^{-1})ba = \\
+		= a^{-1}bebe\ldots eba = a^{-1}b^{n}a
+	\end{gather*}
+
+	\ej{40H2}{Sup\'{o}n $F_1,F_2$ reflexiones distintas de un grupo dih\'{e}drico $D_n$ tal que $F_1F_2 = F_2F_1$. Prueba que $F_1F_2 = R_{180}$}
+	Primero, sabemos que $n$ es par, o de lo contrario no podr\'{i}a existir $R_{180}$. Ahora, todas las reflexiones se pueden escribir
+	como una reflexi\'{o}n cualquiera, llamemosla $F$, y una serie de rotaciones m\'{i}nimas, llam\'{e}moslas $R$. De esta forma,
+	escribimos $F_1$ y $F_2$ como
+	\begin{gather*}
+		\begin{cases}
+			F_1 = R^{a}F \\
+			F_2 = R^{b}F
+		\end{cases}
+	\end{gather*}
+	siendo $a,b \in \mathbb{N}, \; a \neq b, \; a \leq n \; b \leq n$. Ahora, sabemos que
+	\begin{gather*}
+		F_1F_2 = R^{a}HR^{b}H = R^{a}HHR^{-b} = R^{a}R^{-b} = R^{a-b} \\
+		F_2F_1 = R^{b}HR^{a}H = R^{b}HHR^{-a} = R^{b}R^{-a} = R^{b-a}
+	\end{gather*}
+
+	Es decir, que $a-b \equiv b-a (\mathrm{mod} \; n) \implies 2(a-b) \equiv 0 (\mathrm{mod} \; n)$. Pero como tanto $a$ como $b$ son menores o iguales
+	a $n$, no queda otra que $2(a-b) = \pm n$, es decir, $a-b = \pm n/2$, lo que significa que $F_1F_2$ es la rotaci\'{o}n $R_{180} = R^{n/2}$ \\
+
+	\ej{1H3}{Para cada grupo en la siguiente lista, encuentra el orden del grupo y el orden de cada elemento en el grupo.
+	¿Qué relación observas entre los órdenes de los elementos de un grupo y el orden del grupo?}
+	\begin{gather*}
+		\mathbb{Z}_{12}, \quad U(10), \quad U(12), \quad U(20), \quad D_{4}
+	\end{gather*}
+
+	\begin{enumerate}
+		\item $(\mathbb{Z}_{12}, +)$
+			\begin{center}
+				\begin{tabular}{c|c|c|c|c|c|c|c|c|c|c|c|c}
+					$\text{elem}$ & $\overline{1}$ & $\overline{2}$& $\overline{3}$ & $\overline{4}$ & $\overline{5}$ & $\overline{6}$ & $\overline{7}$ & $\overline{8}$ & $\overline{9}$ & $\overline{10}$ & $\overline{11}$ & $\overline{12}$ \\ \hline 
+					\text{orden} & $12$ & $6$ & $4$ & $3$ & $12$ & $2$ & $12$ & $3$ & $4$ & $6$ & $12$ & $1$
+				\end{tabular}
+			\end{center}
+			Usando el teorema 1.6.7, en notaci\'{o}n, es:
+			$$
+			|\overline{k}| = \frac{|\overline{1}|}{\mathrm{mcd}(|\overline{1}|,k)} = \frac{12}{\mathrm{mcd}(12,k)}
+			$$
+		\item $(U(10), \cdot)$
+			\begin{center}
+				\begin{tabular}{c|c|c|c|c}
+					elem & $\overline{1}$ & $\overline{3}$ & $\overline{7}$ & $\overline{9}$ \\ \hline
+					orden & 1 & 4 & 4 & 2
+				\end{tabular}
+			\end{center}
+		\item $(U(12),\cdot)$
+			\begin{center}
+				\begin{tabular}{c|c|c|c|c}
+					elem & $\overline{1}$ & $\overline{5}$ & $\overline{7}$ & $\overline{11}$ \\ \hline
+	orden & 1 & 2 & 2 & 2 \\
+				\end{tabular}
+			\end{center}
+		\item $(U(20),\cdot)$
+			\begin{center}
+				\begin{tabular}{c|c|c|c|c|c|c|c|c}
+					elem & $\overline{1}$ & $\overline{3}$ & $\overline{7}$ & $\overline{9}$ & $\overline{11}$ & $\overline{13}$ & $\overline{17}$ & $\overline{19}$ \\ \hline
+					orden & 1 & 4 & 4 & 2 & 2 & 3 & 4 & 2 \\
+				\end{tabular}
+			\end{center}
+		\item $(D_4,\circ)$
+			\begin{center}
+				\begin{tabular}{c|c|c|c|c|c|c|c|c}
+					elem & $R$ & $R^2$ & $R^{3}$ & Id & $H$ & $HR$ & $HR^2$ & $HR^{3}$ \\ \hline
+	orden & 4 & 2 & 4 & 1 & 2 & 2 & 2 & 2 \\
+				\end{tabular}
+			\end{center}
+	\end{enumerate}
+
+	\ej{10H3}{Dado que $\{e, a, a^{2}, b, ab, a^{2}b\}$ es un grupo donde $|a| = 3$, $|b| = 2$ y $ba = a^{2}b$,
+	determina cuál de los seis elementos es $aba^{2}$ y cuál es $a^{2}bab$.}
+	\begin{gather*}
+		aba^2 = a \cdot ba \cdot a = a \cdot a^2b \cdot a = eba = ba = a^2b \\
+		a^2bab = a^2a^2bb = a^{4}b^2 = ab^2 = a
+	\end{gather*} \\
+
+	\ej{11H3}{Encuentra un subgrupo no abeliano de orden 6 en $D_6$}
+
+	Probamos con $S = \{I,R^2,R^{4},H,R^2H,R^{4}H\}$.
+	\begin{gather*}
+		\begin{cases}
+			R^{2a} \circ R^{2b} = R^{2(a+b)} \\
+			R^{2a} \circ R^{2b}H = R^{2(a+b)}H \\
+			R^{2a}H \circ R^{2b} = R^{2a} \circ R^{-2b} \circ H = R^{2(a-b)}H \\
+			R^{2a}H \circ R^{2b}H = R^{2a} \circ R^{-2b} \circ H \circ H = R^{2(a-b)}
+		\end{cases}
+	\end{gather*}
+	$\therefore$ es cerrado por productos $\therefore$ es cerrado por inversos. Por lo que si es un subgrupo no abeliano de orden 6. \\
+
+	\ej{14H3}{Cuantos subgrupos de orden 4 tiene $D_4$?}
+
+	Los \'{u}nicos son:
+	\begin{gather*}
+		\{I,R,R^2,R^{3}\} \\
+		\{I,R^2,H,R^2H\}
+	\end{gather*} \\
+
+	\ej{23H3}{Si $a$ es un elemento de grupo, y $|a| = \infty$, prueba que $a^{n} \neq a^{m} \; \forall m \neq n$.}
+
+	Supongamos que existen $n,m \in \mathbb{N}$ distintos tal que $a^{n} = a^{m}$. Sin perdida de generalidad, suponemos que $n > m$. Entonces
+	\begin{gather*}
+		a^{n} = a^{m} \iff a^{n-m} = e \implies \infty | (n-m)
+	\end{gather*}
+	lo cual es absurdo. \\
+
+	\ej{7H4}{Encuentra un ejemplo de un grupo c\'{i}clico, cuyos subgrupos propios son todos c\'{i}clicos.}
+
+	$U(12) - \{\overline{1},\overline{5},\overline{7},\overline{11}\}$ es un ejemplo, ya que
+	\begin{gather*}
+		|1| = 1 \quad |5| = |7| = |11| = 2
+	\end{gather*}
+	
+	$therefore U(12)$ no es c\'{i}clico, pero por el teorema de Lagrange, $|H| \in \{1,2\}$. Si $|H| = 1,$ entonces $H = \{1\}$. Y si
+	$|H| = 2$, como 2 es primo, $H$ es c\'{i}clico. \\
+
+	\ej{9H4}{¿Cuántos subgrupos tiene $\mathbb{Z}_{20}$? Enumera un generador para cada uno de estos subgrupos.
+		Supón que $G = \langle a \rangle$ y que $|a| = 20$. ¿Cuántos subgrupos tiene $G$?
+		Enumera un generador para cada uno de estos subgrupos.}
+	
+	$Z_{20}$ es c\'{i}clico con $|Z_{20}| = 20$. Luego, para cada divisor de 20, hay un subgrupo, y esos son todos. En concreto,
+	los grupos est\'{a}n generados por $\{a^{n/d} : \; d | n \; \forall d = 1,\ldots,n\}$.
+
+	\begin{tabular}{c|c|c|c|c|c|c}
+		orden & $1$ & $2$ & $4$ & $5$ & $10$ & $20$ \\ \hline
+		subgrupo & $\langle \overline{20} \rangle$ & $\langle \overline{10} \rangle$ & $\langle \overline{5} \rangle$ & $\langle \overline{4} \rangle$ & 
+		 $\langle \overline{2} \rangle$ & $\langle \overline{1} \rangle$ \\
+	\end{tabular} \\
+
+	\ej{10H4}{En $\mathbb{Z}_{24}$, nombra todos los generadores del subgrupo de orden 8. Sea $G = \langle a \rangle$ y sea $|a| = 24$. Nombra
+	todos sus generadores del subgrupo del orden 8.}
+
+	En $\mathbb{Z}_{24}$, $|\overline{3}| = 8$. Luego, tiene $\varphi(8)=4$, al ser tambi\'{e}n grupo c\'{i}clico. Estos son $\{3^{k}:k\in U(8)\}$ \\
+
+	\ej{11H4}{Sea $G$ grupo con $a \in G$. Demuestra que $\langle a^{-1} \rangle = \langle a \rangle$.}
+	Por definici\'{o}n
+	\begin{gather*}
+		\langle a^{-1} \rangle = \{(a^{-1})^{k} : k \in \mathbb{Z}\} = \{a^{k} : k \in \mathbb{Z}\} = \langle a \rangle
+	\end{gather*} \\
+
+	\ej{13H4}{En $ \mathbb{Z} $, encuentra un generador del subgrupo $ \langle 10 \rangle \cap \langle 12 \rangle $.
+		En general, ¿cuál es un generador del subgrupo $ \langle m \rangle \cap \langle n \rangle $?
+		Si $ a $ es un elemento del grupo de orden infinito, ¿cuál es un generador del subgrupo
+		$ \langle a^m \rangle \cap \langle a^n \rangle $?}
+
+	$(\mathbb{Z},+)$ es c\'{i}clico infinito, y $|1| = \infty$.
+	\begin{gather*}
+		\langle 10 \rangle = \{10^{k}:k \in \mathbb{Z}\} = 10\cdot k, k \in \mathbb{Z} = \text{m\'{u}ltiplos de 10}
+		\langle 12 \rangle = \{12^{k}:k \in \mathbb{Z}\} = 12\cdot k, k \in \mathbb{Z} = \text{m\'{u}ltiplos de 12}
+	\end{gather*}
+	Si un elemento de $\mathbb{Z}$ tiene que ser m\'{u}ltiplo de 10 y 12, es m\'{u}ltiplo de $\mathrm{mcm}(10,12) = 60$, luego
+	$\gen{10} \cap \gen{12} = \gen{60}$. En general, en $\mathbb{Z}$, $\gen{n} \cap \gen{m} = \gen{\mathrm{mcm}(n,m)}$.
+	En general, con notaci\'{o}n multiplicativa en grupo infinito:
+	\begin{gather*}
+		\gen{a^{n}} \cap \gen{a^{m}} = \gen{a^{\mathrm{mcm}(n,m)}}
+	\end{gather*} \\
+
+	\ej{14H4}{Supón que un grupo cíclico $ G $ tiene exactamente tres subgrupos: el propio $ G $, el conjunto
+		$ \{ e \} $, y un subgrupo de orden $ 7 $. ¿Cuál es el orden de $ G $ (es decir, $ |G| $)? ¿Qué puedes decir
+		si $ 7 $ es reemplazado por $ p $, donde $ p $ es un número primo?}
+
+	$G$ es c\'{i}clico, con subgrupos $\{e\}, G, H \text{ t.q. } |H|=7$. $|G|=49$, ya que si no fuese de la forma $7^{k}$, tendr\'{i}a
+	alguno otro de orden que no sea potencia de 7, por el teorema de Lagrange, y tiene que tener solo 3,
+	por lo que es 49, ya que sus divisores son $\{1,7,49\}$. \\
+
+	\ej{18H4}{Sea $a$ generador del grupo c\'{i}clico $G$. Si $|G| = n$ y $\gen{a^{5}} = \gen{a^{10}}$, demuestra que $n$ es impar}
+
+	Supongamos $n$ par:
+	\begin{gather*}
+		\begin{rcases}
+			|\gen{a^{10}}| = \frac{n}{\mathrm{mcd}(n,10)} \\
+			|\gen{a^{5}}| = \frac{n}{\mathrm{mcd}(n,5)} \\
+		\end{rcases} \implies \mathrm{mcd}(n,10) = \mathrm{mcd}(n,5)
+	\end{gather*}
+	Y esa igualdad es entre un n\'{u}mero que es par si y solo si $n$ es par, y un n\'{u}mero que solo puede ser o 1 o 5. Luego hemos llegado
+	a un absurdo. \\
+
+	\ej{25H4}{Sea $H$ subgrupo de orden impar de $D_n$. Desmuestra que todo grupo de $H$ es c\'{i}clico.}
+
+	$h \in H \implies |h| \; | \; |H| \implies |h|$ es impar. Si hay alguna reflexi\'{o}n, ser\'{i}a un elemento de orden 2, lo cual es
+	absurdo, y $H$ est\'{a} compuesto solo de rotaciones, que es un grupo c\'{i}clico, y todo subgrupo de este ser\'{a} c\'{i}clico. \\
+
+	\ej{26H4}{Da una cantidad infinita de ejemplos de grupos abelianos con exactamente 2 elementos de orden 3. Haz lo mismo
+	para grupos no abelianos. Esos ejemplos se generalizan para exactamente $p-1$ elementos de orden $p$, con $p$ primo?}
+
+	$\mathbb{Z}_{3k}$ es c\'{i}clico, luego es abeliano, y $3 | 3k \therefore$ tiene hay exactamente un subgrupo c\'{i}clico de orden 3, y este est\'{a} generado
+	por exactamente $\varphi(3) = 2$ generadores, que van a ser todos los elementos de orden 3. En el caso de no abelianos,
+	$D_{3k}$ tiene todas sus reflexiones de orden 2, y sus rotaciones son isomorfas a $\mathbb{Z}_{3k}$, que vuelve a ser el caso anterior.
+	Esto se generaliza para $p-1$ elementos de orden $p$, ya que $p | pk$, y $\varphi(p) = p-1$, y se puede usar el argumento de
+	$D_{pk}$ de misma forma.
+
+	\ej{3H5}{Escribe estas permutaciones como ciclios disjuntos}
+
+	\begin{enumerate}
+		\item $(1235)(413) = (15)(234)$ \\
+		\item $(12)(13)(23)(142) = (1423)$ \\
+	\end{enumerate}
+
+	\ej{5H5}{De que orden son las siguientes permutaciones?}
+
+	\begin{enumerate}
+		\item $|(124)(357869)| = \mathrm{mcm}(3,6) = 6$ \\
+		\item $|(345)(245)| = |(25)(34)| = 2$
+	\end{enumerate}
+
+	\ej{9H5}{Escribe el ciclo como producto de ciclios disjuntos}
+	\begin{gather*}
+		[(14562)(2345)(136)(235)]^{10} = \\
+		[(153)(46)]^{10} \underset{\text{disj.}}{=} (153)^{10} (46)^{10} = (153)
+	\end{gather*}
+
+	\ej{19H5}{Sean $\alpha,\beta \in S_n$. Prueba que $\alpha^{-5}\beta\alpha^{3}$ es impar si y solo si lo es $\beta$}
+	\begin{gather*}
+		\varepsilon(\alpha^{-5}\beta\alpha^{3}) = \varepsilon(\alpha^{-1})^{5} \varepsilon(\beta) \varepsilon(\alpha)^{3} =
+		\varepsilon(\alpha^{-1}) \varepsilon(\beta) \varepsilon(\alpha) = \varepsilon(\beta)
+	\end{gather*}
+
+	\ej{22H5}{Cual es el m\'{i}nimo $n$ tal que $\exists \sigma \in S_n \text{ t.q. } |\sigma| = 30$}
+	La descomposici\'{o}n en ciclos disjuntos de $\sigma$ ser\'{a}
+	\begin{gather*}
+		\sigma = \sigma_1 \cdots \sigma_l
+	\end{gather*}
+	Necesitamos $\mathrm{mcm}(|\sigma_1|,\ldots,|\sigma_l|) = 30$, es decir, hay alg\'{u}n ciclo de longitud m\'{u}ltiplo de 5, y otro de 3, y otro
+	de 2. Necesitamos, como m\'{i}nimo, $S_{10}$, ya que ah\'{i} tenemos la cantidad m\'{i}nima de elementos para
+	formar esos 3 ciclos disjuntos.
+
+	Buscando en los grupos alternos, que son los que solo tienen permutaciones pares, tenemos que ir a $A_{12}$. Si cogemos
+	la permutaci\'{o}n anterior y a\~{n}adimos el ciclo $(11,12)$, ya es una permutaci\'{o}n par. Y no hay ninguno m\'{a}s
+	peque\~{n}o.
+	
+	\ej{23H5}{Cu\'{a}les son los posibles ordenes de los elementos de $S_6,A_6$? Y en $S_7$?}
+	En $S_6$, solo puedes $\{1,2,3,4,5,6\}$, probando todas las combinaciones. Con $A_6$, perdemos el 6. Y con $A_7$, tenemos $1,2,3,4,5,7$.
+	En general, para $S_n$, los ordenes posibles son $\{mcm(p):p \in \mathcal{P}(n)\}$
+
+	\ej{25H5}{Sea $\beta = (1,3,5,7,9,8,6)(2,4,10)$. Que $n \in \mathbb{N}$ hacen que $\beta^{n} = \beta^{-5}$}
+
+	 $|\beta| = 21$
+	\begin{gather*}
+		\beta^{n} = \beta^{-5} \iff \beta^{n+5} = e \iff 21 | n+5
+	\end{gather*} \\
+
+	\ej{28H5}{Sup\'{o}n que $H$ es un subgrupo de $S_n$ de orden impar. Prueba que $H \leq A_n$}
+
+	\begin{gather*}
+		\begin{rcases}
+			H \leq S_n \\
+			|H| \text{ impar}
+		\end{rcases} \implies H \leq A_n
+	\end{gather*}
+	ya que, por el teorema de Lagrange, $\forall \; g \in H$, $|g|$ es impar, y al factorizar $g$ en ciclos disjuntos, ninguno puede
+	ser par en orden, ya que $|g| = \mathrm{mcm}(|\sigma_1|,\ldots,|\sigma_r|)$. \\
+	
+	\ej{31H5}{Cu\'{a}ntos elementos de orden 2 hay en $A_8$ que sean de la forma en ciclos disjuntos $(a_1 \; a_2)(a_3 \; a_4)(a_5 \; a_6)(a_7 \; a_8)$}
+
+	\begin{alignat*}{5}
+		&(a_1 \; a_2) && \cdot (a_3 \; a_4) && \cdot (a_5 \; a_6) && \cdot (a_7 \; a_8) && \\
+		& \frac{8 \cdot 7}{2} && \cdot \frac{6 \cdot 5}{2} && \cdot \frac{4 \cdot 3}{2} && \cdot \frac{2 \cdot 1}{2} && \cdot \frac{1}{4!}
+	\end{alignat*}
+	donde 4 primeras fracciones cuentan permutaciones dentro de las misma trasposiciones, y la fracci\'{o}n final tiene en cuenta
+	las permutaciones de los ciclos en s\'{i}, ya que permutan entre s\'{i}, al ser disjuntos. \\
+
+	\ej{41H5}{Sea $(a_1 a_2 a_3 a_4)$ y $(a_5 a_6)$ ciclos disjuntos en $S_{10}$. Demuestra que no existe ningún elemento
+		$x$ en $S_{10}$ tal que $x^2 = (a_1 a_2 a_3 a_4)(a_5 a_6)$.}
+
+	Notamos que $|x^2| = 4$, luego
+	\begin{gather*}
+		|x^2| = \frac{|x|}{\mathrm{mcd}(|x|,2)} \implies |x| = 4 \cdot \mathrm{mcd}(|x|,2)
+	\end{gather*}
+	y as\'{i}, $|x|$ puede ser 4 u 8, pero si es 4, entonces tenemos que $4=8$, luego $|x| = 8$. Por ello, $x = \sigma_1$ \'{o} $x = \sigma_1 \sigma_2$
+	donde $|\sigma_1| = 8$ y $|\sigma_2| = 2$, disjuntos.
+	\begin{gather*}
+		x = \begin{cases}
+			(a_1 \; \ldots \; a_8)(a_9 \; a_{10}) \\
+			(a_1 \; \ldots \; a_8)
+		\end{cases} \implies x^2 = 
+		\begin{cases}
+			(a_1 \; a_3 \; a_5 \; a_7)(a_2 \; a_4 \; a_6 \; a_8) \\
+			(a_1 \; a_3 \; a_5 \; a_7)(a_2 \; a_4 \; a_6 \; a_8)
+		\end{cases} \neq (a_1 \; a_2 \; a_3 \; a_4)(a_5 \; a_6)
+	\end{gather*} \\
+
+	\ej{43H5}{Sea $G$ un grupo de permutaciones sobre un conjunto $X$. Sea $a \in X$ y definamos $\mathrm{stab}(a) = \{\alpha \in G \mid \alpha(a) = a\}$.
+		Llamamos a $\mathrm{stab}(a)$ el estabilizador de $a$ en $G$ (ya que consiste en todos los elementos de
+		$G$ que dejan fijo a $a$). Demuestra que $\mathrm{stab}(a)$ es un subgrupo de $G$. (Este subgrupo fue
+		introducido por Galois en 1832).}
+	
+	\begin{itemize}
+		\item $\mathrm{stab}(a) \neq \varnothing$ ya que $\mathrm{Id} \in \mathrm{stab}(a)$
+		\item $f,g \in \mathrm{stab}(a) \implies fg \in \mathrm{stab}(a)$ ya que $fg(a) = f(g(a)) = f(a) = a$
+		\item $f \in \mathrm{stab}(a) \implies f^{-1} \in \mathrm{stab}(a)$ ya que $a = f^{-1}f(a) = f^{-1}(a)$
+	\end{itemize}
+
+	\ej{45H5}{Para $n \geq 3$, sea $H = \{\beta \in S_n : \beta(1) \in \{1,2\} \land \beta(2) \in \{1,2\}\}$. Demuestra que $H \leq S_n$, y determina
+	$|H|$}
+
+	\begin{itemize}
+		\item $H \neq \varnothing$, ya que $\mathrm{Id} \in H$ \\
+		\item $\beta_1,\beta_2 \in H$
+			\begin{gather*}
+				\beta_1\beta_2(1) = \beta_1(1 \text{ \'{o} } 2) = 1 \text{ \'{o} } 2 \\
+				\beta_1\beta_2(2) = \beta_1(1 \text{ \'{o} } 2) = 1 \text{ \'{o} } 2
+			\end{gather*}
+			por lo que $\beta_1\beta_2 \in H$
+	\end{itemize}
+	y as\'{i}, $H \leq S_n$. Para determinar $|H|$, podemos ver que $H = H_1 \cup H_2$, donde
+	\begin{gather*}
+		H_1 = \{\beta \in S_n : \beta(1) = 1, \beta(2) = 2\} \cong S_{n-2} \\
+		H_2 = \{\beta \in S_n : \beta(1) = 2, \beta(2) = 1\} \text{ que no es grupo, pero } |H_2| = |S_{n-2}|
+	\end{gather*}
+	luego $|H| = 2 \cdot |S_{n-2}| = 2(n-2)!$ \\
+
+	\ej{48H5}{En $S_3$, encuentra elementos $\alpha,\beta$ tal que $|\alpha|=2,|\beta|=2,|\alpha\beta|=3$}
+
+	Cualquier $(a \; b)(b \; c) = (a \; b \; c)$ \\
+
+	\ej{51H5}{Prueba que $S_n$ es no abeliano para $n \geq 3$, y que $A_n$ es no abeliano para $n \geq 4$}
+
+	Para $S_n$, vemos que $(12)(13) \neq (13)(12)$, y para $A_n$, $(124)$ no permuta con $(123)$ \\
+
+	\ej{58H5}{Viendo $S_5$ como el grupo de los movimientos de un pent\'{a}gono regular con sus v\'{e}rtices marcados del 1 al 5, qu\'{e} simetr\'{i}a
+	corresponde a $(14253)$, y cual a $(25)(34)$}
+
+	A $(14253)$ le corresponde $R^{3}$, y $(25)(34)$ es la reflexi\'{o}n $H$. \\
+
+	\ej{8H9}{Viendo $\gen{12}$ y $\gen{3}$ como subgrupos de $\mathbb{Z}$, prueba que $\faktor{\gen{3}}{\gen{12}}$ es isomorfo a $\mathbb{Z}_4$.
+	De la misma forma, demuestra que $\faktor{\gen{8}}{\gen{48}} \cong \mathbb{Z}_6$. Generaliza para enteros $k,n$}
+
+	Es claro que $\gen{12} \subseteq \gen{3}$. Adem\'{a}s, $\gen{12} \normleq \gen{3}$, ya que $\gen{12} \normleq \mathbb{Z}$ y $\gen{12} \leq \gen{3} \therefore$
+	\begin{gather*}
+		\faktor{\gen{3}}{\gen{12}} = \{\overline{0}, \pm\overline{3}, \pm\overline{6}, \pm\overline{9}, \pm\overline{12},\ldots\}
+	\end{gather*}
+	Sin embargo, este grupo colapsa hasta tener 4 elementos. Por ejemplo, $\pm\overline{12} = \overline{0}$, ya que $12 + \gen{12} = 0 + \gen{12}$.
+	Esto pasa si y solo si $12 + (-0) \in \gen{12}$, que es el caso. As\'{i}, se quedan solo los positivos, ya que a base de sumar 12 a cualquier
+	elemento $\overline{a}$, acaba llegando a uno positivo. Adem\'{a}s, cualquiera por encima de 12 se le puede restar 12 hasta llegar al grupo
+	\begin{gather*}
+		\{\overline{0},\overline{3},\overline{6},\overline{9}\}
+	\end{gather*}
+	y adem\'{a}s es c\'{i}clico, generado por $\gen{\overline{3}}$. As\'{i} $\faktor{\gen{3}}{\gen{12}} \cong \mathbb{Z}_4$. De igual forma,
+	$\faktor{\gen{8}}{\gen{48}} \cong \mathbb{Z}_6$. En general, $\faktor{\gen{a}}{\gen{ak}} \cong \mathbb{Z}_k$, ya que $\gen{a} \leq \mathbb{Z}$,
+	$\gen{ak} \normleq \mathbb{Z}$, y $\gen{ak} \subseteq \gen{a}$, por lo que $\gen{ak} \normleq \gen{a}$. Con el razonamiento anterior podemos
+	llegar a colapsar las repeticiones en el grupo hasta quedarnos con $k$ de ellas distinas, y ser\'{a} un grupo generado por $\gen{\overline{a}}$. \\
+
+	\ej{19H9}{Si $H$ es subgrupo normal de $G$ y $|H|=2$, prueba que $H \subseteq Z(G)$. Determina todos los subgrupos normales de $D_n$ de orden 2.}
+
+	Sea $H = \{e,a\}$, $g \in G \implies gag^{-1} \in H$.
+
+	\begin{gather*}
+		\begin{cases}
+			gag^{-1} = e \implies a = e \quad \bot \\
+			gag^{-1} = a \implies ga = ag \; \forall g \in G \implies H \subseteq Z(G)
+		\end{cases}
+	\end{gather*}
+
+	Los \'{u}nicos subgrupos de orden 2 de $D_n$ son los que, siendo $n$ par, $\gen{R^{n/2}}$. \\
+
+	\ej{25H9}{Sea $G = U(32)$ y $H = \{1,15\}$. El grupo $\faktor{G}{H}$ es isomorfo a uno de los siguientes: $\mathbb{Z}_8,\mathbb{Z}_4 \times \mathbb{Z}_2,
+	\mathbb{Z}_2 \times \mathbb{Z}_2 \times \mathbb{Z}_2$. Determina cual es por eliminaci\'{o}n.}
+
+	\begin{gather*}
+		U(32) = \{\overline{1},\overline{3},\overline{5},\ldots,\overline{31}\} \\
+		\faktor{U(32)}{H} = \{[\overline{1}],[\overline{3}],[\overline{5}],\ldots,[\overline{31}]\}
+	\end{gather*}
+
+	Notamos que $\overline{15}^2 = 1$, luego $H \leq U(32)$, y como $U(32)$ es abeliano, $H$ es normal. Veamos repeticiones. Ya que encontrar inversos
+	multiplicativos es tarea dif\'{i}cil, podemos ver que elemento es cada uno a base de calcular sus elementos, de la siguiente forma:
+	\begin{alignat*}{3}
+		& [\overline{3}] &&= \overline{3} \cdot H = \{\overline{3} \cdot 1, \overline{3} \cdot 15\} = \{\overline{3},\overline{13}\} &&= [\overline{13}] \\
+		& [\overline{5}] &&= \overline{5} \cdot H = \{\overline{5} \cdot 1, \overline{5} \cdot 15\} = \{\overline{5},\overline{11}\} &&= [\overline{11}] \\
+		& [\overline{7}] &&= \ldots &&= [\overline{9}] \\
+		& [\overline{17}] &&= \ldots &&= [\overline{31}] \\
+		& [\overline{19}] &&= \ldots &&= [\overline{29}] \\
+		& [\overline{21}] &&= \ldots &&= [\overline{27}] \\
+		& [\overline{23}] &&= \ldots &&= [\overline{25}] \\
+	\end{alignat*}
+
+	As\'{i}, nos queda el grupo
+	\begin{gather*}
+		\faktor{U(32)}{H} = \{[\overline{1}],[\overline{3}],[\overline{5}],[\overline{7}],[\overline{17}],[\overline{19}],[\overline{21}],[\overline{23}]\}
+	\end{gather*}
+
+	Si nos ponemos a calcular ordenes de elementos:
+	\begin{gather*}
+		[\overline{3}]^2 = [\overline{9}] \neq [\overline{1}] \\
+		[\overline{3}]^{3} \neq [\overline{1}] \\
+		[\overline{3}]^{4} \neq [\overline{1}]
+	\end{gather*}
+
+	Por lo que $|[\overline{3}]| \geq 5$, por lo que debe ser 8, y as\'{i}, tenemos que
+	\begin{gather*}
+		\faktor{U(32)}{H} \cong \mathbb{Z}_8
+	\end{gather*}
+	
+	\ej{27H9}{Sea $G = U(16)$, $H = \{\overline{1},\overline{15}\}$ y $K = \{\overline{1},\overline{9}\}$. Son $H$ y $K$ isomorfos? Son $\faktor{G}{H}$
+	y $\faktor{G}{K}$ isomorfos?}
+
+	Primero, empezemos viendo que $H$ y $K$ son subgrupos normales de $G$.
+	\begin{itemize}
+		\item $H \normleq G$?
+			\begin{gather*}
+				\overline{15}^2 = \overline{1} \therefore H \normleq G
+			\end{gather*}
+		\item $K \normleq G$?
+			\begin{gather*}
+				\overline{9}^2 = \overline{1} \therefore K \normleq G
+			\end{gather*}
+	\end{itemize}
+	Con esto, sabemos que son subgrupos normales. Adem\'{a}s, podemos afirmar que $G \not\cong \mathbb{Z}_8$, ya que hemos encontrado dos subgrupos
+	distintos de orden 2, por lo que no puede ser c\'{i}clico. Por otra parte, $H \cong \mathbb{Z}_2$ y $K \cong \mathbb{Z}_2$, por lo que $H \cong K$. \\
+
+	Ahora, veamos el caso de los cocientes. Vamos a ver las repeticiones de $\faktor{G}{H}$:
+	\begin{gather*}
+		\begin{cases}
+			[\overline{1}] = \{\overline{1},\overline{15}\} = [\overline{15}] \\
+			[\overline{3}] = \{\overline{3},\overline{13}\} = [\overline{13}] \\
+			[\overline{5}] = \{\overline{5},\overline{11}\} = [\overline{11}] \\
+			[\overline{7}] = \{\overline{7},\overline{9}\} = [\overline{9}] \\
+		\end{cases} \implies \faktor{G}{H} = \{[\overline{1}],[\overline{3}],[\overline{5}],[\overline{7}]\}
+	\end{gather*}
+	Vamos a calcular \'{o}rdenes, para ver que tipo de subgrupo es $\faktor{G}{H}$.
+	\begin{gather*}
+		[\overline{3}], \quad [\overline{3}]^2 = [\overline{9}] = [\overline{7}] \implies |[\overline{3}]| > 2 \implies |[\overline{3}]| = 4
+	\end{gather*}
+	Luego $\faktor{G}{H}$ es un grupo c\'{i}clico de orden 4, al tener un elemento de orden 4, y ser \'{e}l mismo de orden 4. $\faktor{G}{H} \cong C_4$.
+	Vamos con $\faktor{G}{K}$
+	\begin{gather*}
+		\begin{cases}
+			[\overline{1}] = \{\overline{1},\overline{9}\} = [\overline{9}] \\
+			[\overline{3}] = \{\overline{3},\overline{11}\} = [\overline{11}] \\
+			[\overline{5}] = \{\overline{5},\overline{13}\} = [\overline{13}] \\
+			[\overline{7}] = \{\overline{7},\overline{15}\} = [\overline{15}] \\
+		\end{cases} \implies \faktor{G}{K} = \{[\overline{1}],[\overline{3}],[\overline{5}],[\overline{7}]\}
+	\end{gather*}
+	Veamos los \'{o}rdenes
+	\begin{gather*}
+		\begin{rcases}
+			[\overline{3}]^2 = [\overline{1}] \\
+			[\overline{5}]^2 = [\overline{25}] = [\overline{9}] = [\overline{1}] \\
+			[\overline{7}]^2 = [\overline{49}] = [\overline{1}]
+		\end{rcases} \implies \faktor{G}{K} \cong \mathbb{Z}_2 \times \mathbb{Z}_2
+	\end{gather*}
+	Con solo ver que $|[\overline{3}]| = |[\overline{5}]| = 1$, ya sabemos que no es c\'{i}clico, ya que para $C_n$ y $d|n$, $\exists \varphi(d)$ de haber
+	1 elemento de orden 2, pero vemos que hay 2. As\'{i}, aunque $H \cong K$, no se da el caso de $\faktor{G}{H} \cong \faktor{G}{K}$. \\
+
+	\ej{38H9}{Prueba que para cada $n \in \mathbb{N}$, $\faktor{\mathbb{Q}}{\mathbb{Z}}$ tiene un elemento de orden $n$}
+	Miramos el elemento $[\frac{1}{n}]$:
+	\begin{gather*}
+		\underbrace{[\frac{1}{n}] + \ldots + [\frac{1}{n}]}_{k} = [\frac{k}{n}] = [0] \iff n | k
+	\end{gather*}
+	luego:
+	\begin{gather*}
+		|[\frac{1}{n}]| = n
+	\end{gather*} \\
+
+	\ej{39H9}{Sea $H$ subgrupo de $G$ con la propiedad de que para todo $a,b \in G$, se cumple que $aHbH = abH$. Prueba que $H \normleq G$}
+	Sea $H \leq G \text{ t.q. } \forall \; a,b \in G, \; aHbH = abH$. Entonces, multiplicando por $a^{-1}$ a ambos lados, sacamos que
+	\begin{gather*}
+		HbH = bH \implies Hb \subseteq bH \implies H \subseteq bHb^{-1} \quad \forall \; b
+	\end{gather*}
+	Si ahora cogemos $b^{-1}$
+	\begin{gather*}
+		H \subseteq b^{-1}Hb \implies bHb^{-1} \subseteq H \implies H = bHb^{-1} \quad \forall \; b
+	\end{gather*}
+	demostrado por doble contenido. \\
+
+	\ej{10H10}{Sea $G$ subgrupo de alg\'{u}n di\'{e}drico. Definimos para cada $x \in G$: $\phi(x) =
+		\{1, \text{ si es rotaci\'{o}n}, -1, \text{ si es reflexi\'{o}n}\}$. Prueba que $\phi$ es homomirfismo multiplicativo de $G$}
+
+	Vamos por casos:
+	\begin{itemize}
+		\item $x$ rotaci\'{o}n, $y$ rotaci\'{o}n:
+			\begin{gather*}
+				\phi(xy) = 1 = 1 \cdot 1 = \phi(x) \phi(y)
+			\end{gather*}
+		\item $x$ rotaci\'{o}n, $y$ reflexi\'{o}n
+			\begin{gather*}
+				\phi(xy) = -1 = 1 \cdot -1 = \phi(x) \phi(y)
+			\end{gather*}
+		\item $x$ reflexi\'{o}n, $y$ reflexi\'{o}n
+			\begin{gather*}
+				\phi(xy) = 1 = -1 \cdot -1 = \phi(x) \phi(y)
+			\end{gather*}
+	\end{itemize}
+	El kernel de $\phi$ es $\ker \phi = \{x \in G : x \text{ es rotaci\'{o}n}\}$. As\'{i}:
+	\begin{gather*}
+		\phi^{-1}(-1) = \{x \in G : x = HR^{i}\} \\
+		\phi^{-1}(1) = \{x \in G : x = R^{i}\}
+	\end{gather*}
+	As\'{i}, o bien $G$ no tiene reflexiones, es decir, $-1 \notin \phi(G)$, es decir, $G \subseteq \gen{R}$, o bien $G$ tiene reflexiones
+	y tiene $|\phi^{-1}(-1)| = |\ker \phi| = |\phi^{-1}(1)|$, es decir, hay tantas reflexiones como rotaciones. \\
+
+	\textit{Nota:} En general, si $f:G \to H$ homomorfismo de grupos y $h \in f(G)$. Intentemos ver que es $f^{-1}(h)$. Como $h \in f(G), \exists g_0 \text{ t.q. }
+	\phi(g_0) = h$. Dado cualquier elemento de la preimagen $g \in f^{-1}(h)$, signfifica que $f(g) = h = f(g_0)$
+	\begin{gather*}
+		\left( f(g_0) \right)^{-1} f(g) = e \implies f(g_0^{-1}) f(g) = e \implies f(g_0^{-1}g) = e \implies g_0^{-1}g \in \ker f \implies \\
+		g \in g_0 \ker f \implies f^{-1}(h) \subseteq g_) \ker f \subseteq f^{-1}(h) \therefore \\
+		f^{-1}(h) = g_0 \ker f
+	\end{gather*}
+	donde $f(g_0) = h$. Vamos a usar esto para el 10H10, que es el anterior. Demuestra el enunaciado de este problema. Podemos sacar en claro, como trucazo,
+	este resultado
+
+	\begin{tcolorbox}[title=Truco para las preimagenes]
+		Para un $G \leq D_n$ para alg\'{u}n $n \in \mathbb{N}$, y $f$ homomorfismo:
+		\begin{gather*}
+			|f^{-1}(h)| =
+			\begin{cases}
+				0, & h \notin f(G) \\
+				|\ker f| & h \in f(G)
+			\end{cases}
+		\end{gather*}
+	\end{tcolorbox}
+
+	\ej{11H10}{Prueba que $\faktor{\mathbb{Z} \times \mathbb{Z}}{\gen{(a,0),(0,b)}} \cong \mathbb{Z}_a \times \mathbb{Z}_b$, con $a,b \geq 1$}
+
+	Definimos
+	\begin{align*}
+		f: \mathbb{Z} \times \mathbb{Z} & \to \mathbb{Z}_a \times \mathbb{Z}_b \\
+		(x,y) & \mapsto (\overline{x},\overline{y})
+	\end{align*}
+	Claramente, esto es un homomorfismo:
+	\begin{gather*}
+		f \left( (x_1,y_1) + (x_2,y_2) \right) = f \left( x_1+x_2,y_1+y_2 \right) = (\overline{x_1 + x_2},\overline{y_1+y_2}) = \\
+		= (\overline{x_1} + \overline{x_2}, \overline{y_1} + \overline{y_2}) = (\overline{x_1},\overline{y_1}) + (\overline{x_2},\overline{y_2}) =
+		f(x_1,y_1) + f(x_2,y_2)
+	\end{gather*}
+	Claramente, tambi\'{e}n es epimorfismo. Vamos a calcular el n\'{u}cleo
+	\begin{align*}
+		\ker f &= \{(x,y) \in \mathbb{Z} \times \mathbb{Z} : (\overline{x},\overline{y}) = (\overline{0},\overline{0})\} = \\
+		       &= \{(x,y) \in \mathbb{Z} \times \mathbb{Z} : a|x, \; b|y\} = \\
+		       &= \{(c_1a,c_2b) \in \mathbb{Z} \times \mathbb{Z} : c_1,c_2 \in \mathbb{Z}\} = \\
+		       &= \{(c_1a,0) + (0,c_2b) : c_1,c_2 \in \mathbb{Z}\} = \\
+		       &= \{c_1(1,0) + c_2(0,1) : c_1,c_2 \in \mathbb{Z}\} = \\
+		       &= \gen{(a,0),(0,b)}
+	\end{align*}
+	As\'{i}, por el primer teorema de isomorf\'{i}a, inducimos el isomorfismo $\faktor{\mathbb{Z} \times \mathbb{Z}}{\gen{(a,0),(0,b)}} \cong \mathbb{Z}_a
+	\times \mathbb{Z}_b$
+
+	\ej{13H10}{Demuestra que $\faktor{A \times B}{A \times \{e\}} \cong B$}
+	Definimos nuestra aplicaci\'{o}n
+	\begin{align*}
+		f: A \times B & \to B \\
+		(a,b) & \mapsto b
+	\end{align*}
+	Que es homomorfismo de grupos
+	\begin{gather*}
+		f \left( (a_1,b_1) \cdot (a_2,b_2) \right) = f \left( (a_1a_2,b_1b_2) \right) = b_1b_2 = f(a_1,b_1) f(a_2,b_2)
+	\end{gather*}
+	Es epimorfismo. El n\'{u}cleo es
+	\begin{gather*}
+		\ker f = \{(a,b) \in A \times B : b=e\} = A \times \{e\}
+	\end{gather*}
+	Por el primer teorema de isomorfia, inducimos el isomorfismo deseado. \\
+
+	\textit{Ejemplo:} Vamos a tratar cosas sobre conmutatividad y grupos derivados. \\
+
+	Sea $G$ no abeliano. Definimos el subgrupo derivado
+	\begin{gather*}
+		G' := \gen{a^{-1}b^{-1}ab : a,b \in G}
+	\end{gather*}
+	Si $G$ no es abeliano, eso ser\'{a} algo m\'{a}s que el $\{e\}$. Resulta que $G' \normleq G$, y $\faktor{G}{G'}$ es conmutativo, ya que
+	\begin{gather*}
+		\overline{a^{-1}b^{-1}ab} = \overline{e} \implies \overline{a} \; \overline{b} = \overline{b} \; \overline{a}
+	\end{gather*}
+	Veamos el ejemplo con un di\'{e}drico. \\
+
+	Sea $D_n = \gen{R,H}$.
+	\begin{gather*}
+		R^{i}H^{-1}R^{-1}H = R^{2} \implies R^{2i} \in D'_n \therefore \gen{R^{2}} \subseteq D'_n
+	\end{gather*}
+	Si nos ponemos a echar cuentas.
+	\begin{gather*}
+		(R^{i}H)^{-1}(R^{j}H)^{-1}(R^{i}H)(R^{j}H) = R^{2i -2j} \in \gen{R^2} \\
+		(R^{i})^{-1}(R^{j}H)^{-1}R^{i}(R^{j}H) = R^{-2i} \in \gen{R^2} \\
+		(R^{i}H)^{-1}(R^{j})^{-1}(R^{i}H)R^{j} = ... \in \gen{R^2} \\
+		(R^{i})^{-1}(R^{j})^{-1}R^{i}R^{j} = e \in \gen{R^2}
+	\end{gather*}
+	Luego $D'_n = \gen{R^2}$. \\
+	
+	\ej{18H10}{¿Puede existir un epimorfismo de $\mathbb{Z}_4 \oplus \mathbb{Z}_4$ sobre $\mathbb{Z}_8$? ¿Puede existir un epimorfismo de $\mathbb{Z}_{16}$
+		sobre $\mathbb{Z}_2 \oplus \mathbb{Z}_2$? ¿Puede existir un epimorfismo de $\mathbb{Z}_{18}$ sobre $\mathbb{Z}_3 \oplus
+		\mathbb{Z}_2$? Explica tus respuestas.}
+
+	Para cualquier homomorfismo, y elemento de un grupo:
+	\begin{gather*}
+		f: G \to H, \quad a \in G \\
+		a^{|a|} = e \implies f(a^{|a|}) = e \implies f(a)^{|a|} = e \implies |f(a)|\; |\; |a|
+	\end{gather*}
+	Por esto, sabemos que no existe homomorfismo entre $\mathbb{Z}_4 \times \mathbb{Z}_4$ y $\mathbb{Z}_8$, ya que $\forall a \in \mathbb{Z}_4 \times
+	\mathbb{Z}_4$, no hay elementos de orden 8 en un homomorfismo, luego $\mathbb{Z}_8$ no puede ser la imagen de un homomorfismo que salga de
+	$\mathbb{Z}_4 \times \mathbb{Z}_4$. Tampoco puede existir un epimorfismo de $\mathbb{Z}_{16} \to \mathbb{Z}_2 \times \mathbb{Z}_2$, ya que
+	$\mathbb{Z}_{16}$ es c\'{i}clico, y por ello, tambi\'{e}n lo ser\'{a} $\faktor{\mathbb{Z}_{16}}{\ker f}$, al ser subgrupo de $\mathbb{Z}_{16}$, pero
+	la imagen no es c\'{i}clico. Eso viola el primer teorema de isomorfia. En el caso de $\mathbb{Z}_{18} \to \mathbb{Z}_3 \times \mathbb{Z}_2$.
+	$\mathbb{Z}_{18}$ tiene exactamente un subgrupo normal de orden 3, que es $\gen{\overline{6}}$. Por ello, podemos ver que
+	\begin{align*}
+		\mathbb{Z}_{18} &\to \faktor{\mathbb{Z}_{18}}{\gen{\overline{6}}} \cong \mathbb{Z}_6 \cong \mathbb{Z}_3 \times \mathbb{Z}_2 \\
+		\overline{x} &\mapsto [\overline{x}]
+	\end{align*}
+	Luego, te\'{o}ricamente, existe. Se puede construir con cuidado, al escoger el epimorfismo del primer paso. La composici\'{o}n total puede ser
+	\begin{align*}
+		f: \mathbb{Z}_{18} & \to \mathbb{Z}_3 \times \mathbb{Z}_2 \\
+		\overline{x} & \mapsto (\overline{x},\overline{x})
+	\end{align*}
+
+	En general, existe epimorfismo entre $\mathbb{Z}_n \to \mathbb{Z}_{m_1} \times \mathbb{Z}_{m_2}$ si $m_1m_2 | n$, y $m_1,m_2$ con coprimos.
+	Si existe, entonces
+	\begin{gather*}
+		\mathbb{Z}_{m_1} \times \mathbb{Z}_{m_2} = \phi(\mathbb{Z}_n) \cong \faktor{\mathbb{Z}_n}{\ker \phi} \therefore \\
+		m_1m_2 = |\mathbb{Z}_{m_1} \times \mathbb{Z}_{m_2}| = \frac{|\mathbb{Z}_n|}{|\ker \phi|} = \frac{n}{|\ker \phi|} \therefore \\
+		n = m_1m_2|\ker \phi|	
+	\end{gather*}
+	Si $n$ es m\'{u}ltiplo de $m_1m_2$, entonces existe un \'{u}nico $N \normleq \mathbb{Z}_n$ tal que
+	\begin{gather*}
+		|\faktor{\mathbb{Z}_n}{N}| = \frac{\;n\;}{\frac{n}{m_1m_2}} = m_1m_2 \therefore \faktor{\mathbb{Z}_n}{N} \cong \mathbb{Z}_{m_1m_2}
+		\cong \mathbb{Z}_{m_1} \times \mathbb{Z}_{m_2}
+	\end{gather*}
+	
+\end{document}
