@@ -1881,7 +1881,7 @@
 	\end{gather*}
 	Luego $\ker f$ es normal, y podemos considerar el grupo cociente $G_1 / \ker f$. Veamos que $\im f \leq G_2$
 	\begin{gather*}
-		f(e) = e \implies e \in im f \therefore \im f \neq \varnothing \\
+		f(e) = e \implies e \in \im f \therefore \im f \neq \varnothing \\
 		g_1,g_2 \in \im f, \; \exists a_1,a_2 \in G_1 \text{ t.q. } g_1 = f(a_1),g_2 = f(a_2) \therefore g_1g_2 = f(a_1a_2) \in \im f \\
 		g \in \im f, \; \exists a \in G_1 \text{ t.q. } g = f(a) \therefore g^{-1} = f(a^{-1}) \in \im f
 	\end{gather*}
@@ -1943,7 +1943,7 @@
 	De hecho, es suprayectiva, ya que dado $x \in N, h \in H$
 	\begin{gather*}
 		xhN = h\underbrace{h^{-1}xh}_{\in N}N = \overline{h} \cdot \overline{h^{-1}xh} = \overline{h} \cdot \overline{e} = \overline{h} = hN \\
-		\therefore xhN = hN = f(h) \therefore f(H) = NH/H
+		\therefore xhN = hN = f(h) \therefore f(H) = NH/N
 	\end{gather*}
 	Ahora, analicemos el n\'{u}cleo
 	\begin{align*}
@@ -1953,7 +1953,7 @@
 	\end{align*}
 	Por el primer teorema de isomorf\'{i}a, queda inducida:
 	\begin{align*}
-		\overline{f}: H/(N \cap H) & \to NH/H \\
+		\overline{f}: H/(N \cap H) & \to NH/N \\
 		hN\cap H & \mapsto hN
 	\end{align*}
 
@@ -1970,8 +1970,8 @@
 	\dem En el estudio de los subgrupos normales del cociente $G/N$, vimos que $M/N$ es un subgrupo normal de $G/N$, que se corresponde
 	con el subgrupo $M$ de $G$ (observar que $N \subseteq M$). Ahora, definimos
 	\begin{align*}
-		f: G & \to (G/N)/(M/N) \\
-		g & \mapsto [\overline{g}] := (gN) M/N
+		f: G & \to \faktor{\faktor{G}{N}}{\faktor{M}{N}} \\
+		g & \mapsto [\overline{g}] := (gN) \faktor{M}{N}
 	\end{align*}
 	Primero, $f$ es homomorfismo de grupos.
 	\begin{gather*}
