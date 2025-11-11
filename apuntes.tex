@@ -53,6 +53,8 @@
 \newcommand{\normleq}{\trianglelefteq}
 \newcommand{\normle}{\triangleleft}
 \newcommand{\im}{\mathrm{Im}\,}
+\newcommand{\verteq}{\rotatebox{90}{$\,=$}}
+\newcommand{\equalto}[2]{\underset{\scriptstyle\overset{\mkern4mu\verteq}{#2}}{#1}}
 
 \renewcommand{\leq}{\leqslant}
 \renewcommand{\geq}{\geqslant}
@@ -2492,7 +2494,7 @@
 			[(e,\ldots,e)] = \{(e,\ldots,e)\}
 		\end{rcases} \therefore n \geq 1
 	\end{gather*}
-	Comom $n$ es m\'{u}ltiplo de $p$ y $n \geq 1$ entonces $\exists x \in X, \; \mathbb{X} \neq (e,\ldots,e) \text{ t.q. } [\mathbb{X}] = \{\mathbb{X}\}
+	Como $n$ es m\'{u}ltiplo de $p$ y $n \geq 1$ entonces $\exists x \in X, \; \mathbb{X} \neq (e,\ldots,e) \text{ t.q. } [\mathbb{X}] = \{\mathbb{X}\}
 	\therefore f(\mathbb{X}) = \mathbb{X} \therefore \mathbb{X} = (a,\ldots,a)$ para alg\'{u}n $a \in G, \; a \neq e$. Como $\mathbb{X} \in X$,
 	$a^{p} = e$ y $a \neq e$, entonces $|a| = p$, y $G$ tiene alg\'{u}n elementos de orden $p$
 	
@@ -2501,6 +2503,101 @@
 
 	(Este tema no entra para examen, al menos este a\~{n}o :P) \\
 
+	\begin{defin}
+		Sea $G$ un grupo. Una \textit{serie subnormal} o simplemente \textit{serie} de $G$ es una cadena
+		\begin{gather*}
+			G = G_0 \supseteq G_1 \supseteq \ldots \supseteq G_r = \{e\}
+		\end{gather*}
+		de modo que $G_{i+1} \normleq G_i$ para cada $i=0,\ldots,r-1$. Los grupos $\faktor{G_i}{G_{i+1}}$ son los factores de la serie. Suprimiendo
+		subgrupos repetidos se puede asumir que $G_i \neq G_{i+1}$, aunque no es necesario ni, en general, conveniente. El entero $r$, es decir,
+		el n\'{u}mero de factores, se llama \textit{longitud} de la serie.
+	\end{defin}
+
+	\begin{defin}
+		Una serie de $G$ se dice \textit{serie de composici\'{o}n} si todos sus factores son simples.
+	\end{defin}
+
+	\begin{defin}
+		Un \textit{refinamiento de una serie} $G = G_0 \supseteq \ldots \supseteq G_r = \{e\}$ es otra serie $G = H_0 \supseteq \ldots
+		\supseteq H_s = \{e\}$ de tal forma que $s \geq r$, y que existe una aplicaci\'{o}n inyectiva $i \mapsto i'$ tal que $G_i = H_{i'}$
+	\end{defin}
+
+	\begin{lema}
+		Sea $G$ grupo, $G_0,\ldots,G_r$ una serie de $G$, y $H \leq G$. Se tiene que
+		\begin{gather*}
+			H = H \cap G_0 \supseteq H \cap G_1 \supseteq \ldots \supseteq H \cap G_r = \{e\}
+		\end{gather*}
+		es una serie de $H$.
+	\end{lema}
+
+	\dem Como $H$ y $G$ son subgrupos de $G$,
+	\begin{gather*}
+		H = H \cap G \geq G \cap G_1 \geq H \cap G_2 \geq \ldots \geq H \cap G_r = \{e\}
+	\end{gather*}
+	Como $G_{i+1} \normleq G_i$ entonces $\forall g \in H \cap G_i$
+	\begin{gather*}
+		g(H \cap G_{i+1})g^{-1} \subseteq H \cap G_{i+1} \therefore H \cap G_{i+1} \normleq H \cap G_i
+	\end{gather*}
+	Por ello, tenemos
+	\begin{gather*}
+		H = H \cap G \normleq H \cap G_1 \normleq \ldots \normleq H \cap G_r = \{e\}
+	\end{gather*}
+	por lo que es una serie de $H$.
+
+	\begin{lema}
+		Sean $Q,N,L$ subgrupos de un grupo $G$. Si $L$ es subgrupo normal de $Q$, y $gN = Ng$ para todo $g \in Q$, entonces $\faktor{QN}{LN}
+		\cong \faktor{Q}{L(Q \cap N)}$
+	\end{lema}
+
+	\dem Aqu\'{i}, $Q \leq G$, $L \normleq Q$, $N \leq G$, y $gN = Ng \; \forall \; g \in Q$. Observamos que $QN = NQ$. Como $L \leq Q$,
+	$LN = NL$. Adem\'{a}s, $QL = LQ$, ya que $L \normleq Q$. Veamos que $LN \normleq QN$. Como $e = e\cdot e \in LN \implies LN \neq \varnothing$
+	\begin{gather*}
+		LN \cdot LN = LLNN \subseteq LN
+	\end{gather*}
+	Dado $g \in L, x \in N$
+	\begin{gather*}
+		(gx)^{-1} = x^{-1} g^{-1} \in NL = LN
+	\end{gather*}
+	Por lo que es cerrado por productos e inversos, as\'{i} $LN \leq QN$. Veamos la normalidad. Dados $g \in Q, x \in N$
+	\begin{gather*}
+		(gx)LN(gx)^{-1} = gxLNx^{-1}g^{-1} \subseteq gNLNNg^{-1} = gLNNNg^{-1} \subseteq gLNg^{-1} = gLg^{-1} \cdot gNg^{-1} \subseteq LN
+	\end{gather*}
+	Este \'{u}ltimo contenido se debe a que $L \normleq Q, gN = Ng$. Por ello, $LN \normleq QN$. Ahora, veamos que $L(Q \cap N) \normleq Q$.
+	\begin{gather*}
+		\begin{rcases}
+			L \normleq Q \\
+			Q \cap N \leq Q
+		\end{rcases} \implies L(Q \cap N) \leq Q \\
+		g \in Q: \; g(Q \cap N)g^{-1} \underset{gN=Ng}{\subseteq} Q \cap N \therefore Q \cap N \normleq Q \therefore \\
+		gL(Q \cap N)g^{-1} = gLg^{-1}g(Q cap N)g^{-1} \leq L(Q \cap N) \therefore L(Q \cap N) \normleq Q
+	\end{gather*}
+	Aplicamos el segundo teorema de isomorfia a $Q, LN \leq G$.
+	\begin{gather*}
+		\faktor{Q}{Q \cap LN} \underset{2TI}{\cong} \faktor{QLN}{LN} = \faktor{QN}{LN}
+	\end{gather*}
+	Ahora, veamos que $Q \cap LN = L(Q \cap N)$
+	\begin{gather*}
+		\supseteq / \quad \begin{rcases}
+			L \subseteq Q,LN \\
+			Q \cap N \subseteq Q,LN
+		\end{rcases} \implies L(Q \cap N) \subseteq Q \cap LN \\
+		\subseteq / \quad g \in Q \cap LN, \; g = g_1 x \; (g_1 \in L, x \in N) \therefore x = g_1^{-1} g \in Q \therefore x \in Q \cap N \therefore \\
+		\therefore g \in L(Q \cap N) \therefore Q \cap LN \subseteq L(Q \cap N)
+	\end{gather*}
+	Y as\'{i}, $L(Q \cap N) = Q \cap LN \therefore \faktor{Q}{L(Q \cap N)} \cong \faktor{QN}{LN}$
+	
+	\begin{teoma}
+		\textit{Teorema de Schreier:} Cualesquiera dos series de un mismo grupo tienen refinamientos equivalentes.
+		Por fin, este teorema es del siglo 20, \textit{cine}.
+	\end{teoma}
+
+	\dem Sean
+	\begin{gather*}
+		G = G_0 \normleq G_1 \normleq \ldots \normleq G_m = \{e\} \\
+		G = H_0 \normleq H_1 \normleq \ldots \normleq H_n = \{e\} \\
+	\end{gather*}
+	dos series de $G$. Partimos de la primera serie y empezamos a refinarla.
+	
 	
 	
 
